@@ -1,6 +1,6 @@
 {
   "name": "gulp-mean-seed",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Gulp driven Mean seed with supporting CLI.",
   "main": "index.js",
   "scripts": {
@@ -32,6 +32,6 @@
     "v8flags": "^2.0.3"
   },
   "bin": {
-    "gulp-ng-seed": "./bin/gulp-mean-seed.js"
+    "gulp-mean-seed": "./bin/gulp-mean-seed.js"
   }
 }
