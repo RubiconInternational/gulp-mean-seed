@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+
 #stop gap until i figure out why ./bin cant find any modules.
 npm install -g chalk
 npm install -g gulp
