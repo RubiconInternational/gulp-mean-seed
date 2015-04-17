@@ -1,0 +1,37 @@
+{
+  "name": "gulp-mean-seed",
+  "version": "1.0.0",
+  "description": "Gulp driven Mean seed with supporting CLI.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "sh packages.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ktstowell/gulp-mean-seed.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ktstowell/gulp-mean-seed/issues"
+  },
+  "homepage": "https://github.com/ktstowell/gulp-mean-seed",
+  "devDependencies": {
+    "chalk": "^1.0.0",
+    "gulp": "^3.8.11",
+    "gulp-replace": "^0.5.3",
+    "gulp-run": "^1.6.7",
+    "gulp-util": "^3.0.4",
+    "gutil": "^1.6.4",
+    "interpret": "^0.5.2",
+    "liftoff": "^2.0.3",
+    "minimist": "^1.1.1",
+    "mkdir-p": "0.0.6",
+    "run-sequence": "^1.0.2",
+    "v8flags": "^2.0.3"
+  },
+  "bin": {
+    "gulp-ng-seed": "./bin/gulp-mean-seed.js"
+  }
+}
