@@ -18,6 +18,10 @@ An example workflow is as follows:
     $ cd angularSeedApp
     $ gulp serve
 
+## Context
+This project was originally built for my co-workers who wanted to see how I structure a full-stack JS application.
+It is fairly opinionated and contains things like `dependency injection namespaceing` that will probably be confusing without an explanation.
+
 ## What's next
 
 in the following release I aim to include test framework integrations as well as
