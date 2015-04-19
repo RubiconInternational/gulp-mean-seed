@@ -1,5 +1,5 @@
 # gulp-mean-seed
-Gulp generator for Angular apps.
+Gulp generator for MEAN stack apps.
 
 ## Install
 Make sure to install globally.
@@ -22,6 +22,10 @@ An example workflow is as follows:
 
 in the following release I aim to include test framework integrations as well as
 some tests that leverage them.
+
+The next release will include an abstraction between `/client` and `/server`. Included in `/server` will exist some simple Node API stubs and some tests that flex them.
+
+The install script will also set up MongoDB requirements.
 
 ## Known Issues
 Please see the issues tab. Likewise, please submit issues as you come across them!
