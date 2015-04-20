@@ -32,7 +32,7 @@ var Seed = {
 
 // Name
 Seed.name = argv._[0] || Seed.name;
-Seed.paths.separator = OS.platform().match('win')? '\\' : '/';
+Seed.paths.separator = OS.platform().match('darwin')? '/' : '\\';
 Seed.paths.origin = Seed.paths.origin + Seed.paths.separator + '..' + Seed.paths.separator;
 Seed.paths.src = Seed.paths.origin + 'seed'+ Seed.paths.separator +'**' + Seed.paths.separator + '*';
 Seed.paths.dest = Seed.paths.dest + Seed.paths.separator  +Seed.name;
