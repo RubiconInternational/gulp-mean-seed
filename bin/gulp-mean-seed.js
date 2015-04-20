@@ -54,13 +54,14 @@ gulp.task('seed', function() {
 //------------------------------------------------------------------------------------------//
 // @description
 sequence('seed', function() {
+  // Convert the following into a shell script for ease in synchronicity.
   console.log(chalk.cyan.bold('Done.'));
   process.chdir(cwd+Seed.paths.separator+Seed.name);
   console.log(chalk.cyan.bold('Copying bowerrc...'));
-  run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator + '.bowerrc '+ cwd+Seed.paths.separator+Seed.name+Seed.paths.separator+'.bowerrc').exec();
+  run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'client' + Seed.paths.separator + '.bowerrc ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + '.bowerrc').exec();
   console.log(chalk.cyan.bold('Copying Seed assets...'));
   console.log(chalk.cyan.bold('Running NPM and Bower install...'));
-  run('npm install && bower install').exec();
+  run('cd client && npm install && bower install').exec();
   console.log(chalk.cyan.bold('Done! run gulp serve from your new application!'));
 });
 

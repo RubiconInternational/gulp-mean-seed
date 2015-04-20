@@ -1,69 +1,122 @@
 'use strict';
 
 /***********************************************************************************************************************************************
- * APP_NAME GULP FILE
+ * APP_NAME GLOBAL GULP FILE
  ***********************************************************************************************************************************************
  * @description
  */
+
+//
+// DEPENDENCIES
+//------------------------------------------------------------------------------------------//
+// @description
 var gulp = require('gulp');
-var connect = require('gulp-connect');
-var inject = require('gulp-inject');
-var concat = require('gulp-concat');
-var run = require('run-sequence');
-var angularFileSort = require('gulp-angular-filesort');
+var argv = require('minimist')(process.argv.slice(2));
 
 //
-// STYLE TASKS
+// ENVIRONMENT
 //------------------------------------------------------------------------------------------//
-// @description CSS precompilation, etc
+// @description
+var Environment = {setting: 'development'};
 
 //
-// SCRIPT TASKS
-//------------------------------------------------------------------------------------------//
-// @description Linting, concatenation, etc.
-gulp.task('scripts.concat', function() {
-  return gulp.src(['app/system/**/*.js', 'app/modules/**/*.js', 'app/app.js'])
-    .pipe(angularFileSort())
-    .pipe(concat('APP_NAME.js'))
-    .pipe(gulp.dest('.tmp'));
-});
-
-gulp.task('inject.scripts', function() {
-  var target = gulp.src('app/index.html');
-  var sources = gulp.src('.tmp/APP_NAME.js');
-
-  return target.pipe(inject(sources, {relative: true,
-      transform: function(filepath) {
-        return '<script src="APP_NAME.js"></script>';
-      }
-    }))
-    .pipe(gulp.dest('app'));
-});
-
-//
-// CONNECT TASKS
+// SYSTEMS MANAGEMENT
 //------------------------------------------------------------------------------------------//
 // @description
 
-gulp.task('watch', function() {
-  return gulp.watch(['app/app.js', 'app/index.html', 'app/modules/**/*'], function(event) {
-    return gulp.src(event.path)
-      .pipe(connect.reload());
-  });
+var Systems = function() {
+  var manifest = require('./systems.json');
+  var modules = {};
+
+  var API = {
+    /**
+     * Runs tasks
+     * @param task
+     */
+    all: function(task) {
+      for(var module in modules) {
+        modules[module][task]();
+      }
+    },
+    /**
+     * Lists the available sub systems
+     * @returns {Array}
+     */
+    list: function() {
+      return Object.keys(modules);
+    },
+    /**
+     * Lists the avaialable tasks for a system
+     * @param system
+     * @returns {Array}
+     */
+    tasks: function(system) {
+      return Object.keys(modules[system]);
+    }
+  };
+
+  // Set execution environment
+  Environment.setting = argv.env || Environment.setting;
+
+  // Require - TODO: convert strings into config for reusability
+  for(var module in manifest) {
+    var config = require(manifest[module].config);
+
+    // Create reference to module API.
+    modules[module] = require(manifest[module].module)({environment: config.environments[Environment.setting]});
+    // Register gulp tasks by system
+    gulp.register('systems.'+module, function() { console.log('Available tasks for this system are: ', API.tasks(module)); })
+    // Register gulp tasks by system tasks
+    for(var task in modules[module]) {
+      gulp.register(('systems.'+module+'.'+task), modules[module][task]);
+    }
+  }
+
+  return API;
+};
+
+//
+// GULP ENTRIES
+//------------------------------------------------------------------------------------------//
+// @description
+
+/**
+ * Registers a gulp task dynamically.
+ * @param name
+ * @param fn
+ * @returns {*}
+ */
+gulp.register = function(name, fn) {
+  return gulp.task(name, fn);
+};
+
+/**
+ * APP_NAME
+ * @description serves as the APP_NAME manifest
+ */
+gulp.task('APP_NAME', function() {
+  console.log('Available tasks for APP_NAME: ', gulp.tasks);
 });
 
-gulp.task('connect', function() {
-  return connect.server({
-    root: ['app', '.tmp'],
-    port: 9000,
-    livereload: true
-  });
+/**
+ * Systems
+ */
+gulp.task('systems', function(cb) {
+  console.log('Available systems are: ' + Systems.list().join(', '));
+  return cb(); // preserve stream
+});
+
+/**
+ * Serve
+ */
+gulp.task('systems.up', function(cb) {
+  Systems.all('up');
+  return cb(); // preserve stream
 });
 
 //
-// SERVING
+// INIT
 //------------------------------------------------------------------------------------------//
-// @description Launches app.
-gulp.task('serve', function() {
-  run('scripts.concat', ['inject.scripts', 'connect', 'watch']);
-});
+// @description
+// Create the partial while preserving namespace
+Systems = Systems();
