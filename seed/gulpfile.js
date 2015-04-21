@@ -13,6 +13,7 @@
 var gulp = require('gulp');
 var argv = require('minimist')(process.argv.slice(2));
 var replace = require('gulp-replace');
+var rename = require('gulp-rename');
 
 //
 // ENVIRONMENT
@@ -61,6 +62,32 @@ var Systems = function() {
      */
     tasks: function(system) {
       return Object.keys(modules[system]);
+    },
+    /**
+     * Process systerm requirements and transfer the specified files.
+     * @param name
+     * @param required
+     */
+    required: function(name, required) {
+      console.log(name, required);
+      name = name.split('.');
+
+      name = {
+        basename: name[0],
+        extname: name[1]
+      };
+
+      return gulp.src(required.src)
+        .pipe(rename(function(path) {
+          for(var prop in name) {
+            if(name[prop]) {
+              path[prop] = name[prop];
+            }
+          }
+
+          path.extname = '.'+path.extname;
+        }))
+        .pipe(gulp.dest(required.dest));
     }
   };
 
@@ -75,6 +102,10 @@ var Systems = function() {
     modules[module] = require(manifest[module].module)();
     // Register gulp tasks by system
     gulp.register('systems.'+module, function() { console.log('Available tasks for this system are: ', API.tasks(module)); })
+    // Supply subsystems with any required config items.
+    for(var required in manifest[module].requires) {
+      API.required(required, manifest[module].requires[required]);
+    }
     // Register gulp tasks by system tasks
     for(var task in modules[module]) {
       gulp.register(('systems.'+module+'.'+task), modules[module][task]);

@@ -18,6 +18,53 @@ An example workflow is as follows:
     $ cd angularSeedApp
     $ gulp serve
 
+## gulp-mean-seed API
+
+This API applies to the gulpfile WITHIN the generated seed app.
+
+### Organization and Architecture
+
+The idea is that the seed is a system that encapsulates subsystems.
+
+At the current version, the subsystems are: `platform` and `client`.
+
+#### Creating new Systems.
+
+    More on this later.
+
+****
+
+### API
+
+#### API - General
+
+`gulp APP_NAME` -
+    At any point you can type this and be shown a list of available tasks for the seed's gulp file.
+    Be sure to replace `APP_NAME` with the name of your app.
+
+#### API - Systems
+
+`gulp systems` -
+    This will show you the available systems within your app.
+
+`gulp systems.[system name]` -
+    This will show you the available tasks within that system. This is dynamic API, thusly, replace `system name` with the name of the system.
+
+`gulp systems.[system name].[task name]` -
+    Will execute a system's task. The idea is that you could manually run methods in your systems individual gulp file if need be.
+    Ideally, you shouldn't have to via the system API's convenience methods.
+
+`gulp systems.up` -
+    This will launch all available systems.
+
+`gulp systems.build` -
+   This will build all available systems according to the provided configurations.
+
+`gulp systems.deploy` -
+    This will deploy all available systems to their mandated locations.
+
+****
+
 ## Context
 This project was originally built for my co-workers who wanted to see how I structure a full-stack JS application.
 It is fairly opinionated and contains things like `dependency injection namespaceing` that will probably be confusing without an explanation.

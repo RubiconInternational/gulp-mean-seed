@@ -1,1 +1,1 @@
-var env = APP_ENV;
+var env = "development";

@@ -15,6 +15,7 @@ var connect = require('gulp-connect');
 var replace = require('gulp-replace');
 var inject = require('gulp-inject');
 var concat = require('gulp-concat');
+var rename = require('gulp-rename');
 var run = require('run-sequence');
 var angularFileSort = require('gulp-angular-filesort');
 var exec = require('gulp-run');
@@ -28,8 +29,8 @@ var system = require('./system.json');
 //------------------------------------------------------------------------------------------//
 // @description
 var Binaries = {
-  nix: __dirname+'/bin/nix/app.sh',
-  win: __dirname+'\\bin\\win\\app.bat'
+  nix: {tpl: __dirname+'/bin/nix/_app.sh', exec: __dirname+'/bin/nix/app.sh', command: 'sh'},
+  win: {tpl: __dirname+'\\bin\\win\\_app.bat', exec: __dirname+'\\bin\\win\\app.bat', command: ''}
 };
 
 //
@@ -57,19 +58,30 @@ Environment.apply = function(env) {
 gulp.task('environment.binary', function() {
   var binary = Binaries[Environment.platform.map[Environment.platform.label]];
   var base = __dirname+'/bin/'+Environment.platform.map[Environment.platform.label];
-
-  return gulp.src(binary, {base: base})
-    .pipe(replace(/APP_ENV/g, JSON.stringify(system.environments[Environment.setting])))
+  console.log(Environment, binary.tpl)
+  return gulp.src(binary.tpl)
+    .pipe(replace(/APP_ENV/g, Environment.setting))
+    .pipe(rename(function(path) {
+      console.log(path)
+      path.basename = path.basename.split('_')[1];
+      //console.log(path)
+    }))
     .pipe(gulp.dest(base));
 });
 
-
+/**
+ * Write the appropriate app name into the environment variable.
+ */
 gulp.task('environment.app', function() {
-  var base = __dirname+'/app';
+  var base = __dirname;
 
-  gulp.src(base+'/env.js', {base:base})
-    .pipe(replace(/APP_ENV/g, Environment))
-    .pipe(gulp.dest(base));
+  gulp.src(base+'/.env', {base:base})
+    .pipe(replace(/([a-zA-Z0-9])\w+/g, 'var env = "'+Environment.setting+'";'))
+    .pipe(rename(function(path) {
+      path.basename = path.basename.split('.')[1];
+      path.extname = '.js';
+    }))
+    .pipe(gulp.dest(base+'/app'));
 });
 //
 // STYLE TASKS
@@ -130,13 +142,14 @@ gulp.task('serve', function() {
   run(['environment.app'], 'scripts.concat', ['scripts.inject', 'connect', 'watch']);
 });
 
-module.exports = function(spec) {
-  // Write environment to batch file.
-  run('environment.binary');
+module.exports = function() {
 
   return {
     up: function() {
-      return exec(Binaries[Environment.platform.map[Environment.platform.label]]).exec();
+      var bin = Binaries[Environment.platform.map[Environment.platform.label]];
+      run('environment.binary', function() {
+        exec(bin.command +' '+ bin.exec).exec();
+      });
     }
   }
 };

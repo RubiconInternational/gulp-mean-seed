@@ -7,6 +7,12 @@
   "client": {
     "module": "./client/gulpfile.js",
     "config": "./client/system.json",
-    "env": "./client/.env"
+    "env": "./client/.env",
+    "requires": {
+      "sever.json": {
+        "src": "./platform/system.json",
+        "dest": "./client/app/"
+      }
+    }
   }
 }
