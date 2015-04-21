@@ -1,10 +1,12 @@
 {
   "platform": {
     "module": "./platform/app.js",
-    "config": "./platform/system.json"
+    "config": "./platform/system.json",
+    "env": "./platform/.env"
   },
   "client": {
     "module": "./client/gulpfile.js",
-   "config": "./client/system.json"
+    "config": "./client/system.json",
+    "env": "./client/.env"
   }
 }

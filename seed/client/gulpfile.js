@@ -19,12 +19,24 @@ var run = require('run-sequence');
 var angularFileSort = require('gulp-angular-filesort');
 var exec = require('gulp-run');
 var OS = require('os');
+var fs = require('fs');
+var argv = require('minimist')(process.argv.slice(2));
+var system = require('./system.json');
+
+//
+// BINARIES
+//------------------------------------------------------------------------------------------//
+// @description
+var Binaries = {
+  nix: __dirname+'/bin/nix/app.sh',
+  win: __dirname+'\\bin\\win\\app.bat'
+};
 
 //
 // ENVIRONMENT
 //------------------------------------------------------------------------------------------//
 // @description
-var Environment = {host: 'localhost', port: 3000, placeholder: 'APP_ENV'};
+var Environment = {host: 'localhost', port: 3000, placeholder: 'APP_ENV', setting: fs.readFileSync(__dirname+'/.env', {encoding: 'UTF-8'})};
     Environment.platform = {label: OS.platform(), map: {}};
 
 // Feels pointless but let's me use maps for the rest of the implementation
@@ -32,29 +44,33 @@ Environment.platform.label.match('darwin') ?
   Environment.platform.map[Environment.platform.label] = 'nix' :
     Environment.platform.map[Environment.platform.label] = 'win';
 
-Environment.apply = function(spec) {
-  for(var prop in spec) {
-    Environment[prop] = spec[prop];
+Environment.apply = function(env) {
+  for(var prop in system.environments[env]) {
+    Environment[prop] = system.environments[env][prop];
   }
-};
-
-var binaries = {
-  nix: 'sh ./bin/nix/app.sh',
-  win: __dirname+'\\bin\\win\\app.bat'
 };
 
 /**
  * Apply
  * @description re-writes the placeholder into the actual development name
  */
-gulp.task('environment.apply', function() {
-  var path = './bin/'+Environment.platform.map[Environment.platform]+'/';
+gulp.task('environment.binary', function() {
+  var binary = Binaries[Environment.platform.map[Environment.platform.label]];
+  var base = __dirname+'/bin/'+Environment.platform.map[Environment.platform.label];
 
-  return gulp.src(path+ '_app.{bat, sh}')
-    .pipe(replace(/APP_ENV/g, argv.env))
-    .pipe(gulp.dest(path+'app.'))
+  return gulp.src(binary, {base: base})
+    .pipe(replace(/APP_ENV/g, JSON.stringify(system.environments[Environment.setting])))
+    .pipe(gulp.dest(base));
 });
 
+
+gulp.task('environment.app', function() {
+  var base = __dirname+'/app';
+
+  gulp.src(base+'/env.js', {base:base})
+    .pipe(replace(/APP_ENV/g, Environment))
+    .pipe(gulp.dest(base));
+});
 //
 // STYLE TASKS
 //------------------------------------------------------------------------------------------//
@@ -65,7 +81,7 @@ gulp.task('environment.apply', function() {
 //------------------------------------------------------------------------------------------//
 // @description Linting, concatenation, etc.
 gulp.task('scripts.concat', function() {
-  return gulp.src(['app/system/**/*.js', 'app/modules/**/*.js', 'app/app.js'])
+  return gulp.src(['app/system/**/*.js', 'app/modules/**/*.js', 'app/env.js', 'app/app.js'])
     .pipe(angularFileSort())
     .pipe(concat('APP_NAME.js'))
     .pipe(gulp.dest('.tmp'));
@@ -108,16 +124,19 @@ gulp.task('connect', function() {
 //------------------------------------------------------------------------------------------//
 // @description Launches app.
 gulp.task('serve', function() {
-  run('scripts.concat', ['scripts.inject', 'connect', 'watch']);
+  Environment.setting = argv.env || 'development';
+  Environment.apply(Environment.setting);
+
+  run(['environment.app'], 'scripts.concat', ['scripts.inject', 'connect', 'watch']);
 });
 
 module.exports = function(spec) {
   // Write environment to batch file.
-  //run('environment.apply');
+  run('environment.binary');
 
   return {
     up: function() {
-      return exec(binaries[Environment.platform.map[Environment.platform.label]]).exec();
+      return exec(Binaries[Environment.platform.map[Environment.platform.label]]).exec();
     }
   }
 };

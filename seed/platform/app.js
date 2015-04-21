@@ -52,9 +52,8 @@ var binaries = {
 // APP_NAME Platform entry.
 //------------------------------------------------------------------------------------------//
 // @description
-module.exports = function(spec) {
+module.exports = function() {
   // Ingest environment config.
-  Environment.apply((spec.environment || {}));
 
   return {
     up: function() {

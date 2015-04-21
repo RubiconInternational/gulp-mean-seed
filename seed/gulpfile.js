@@ -12,12 +12,21 @@
 // @description
 var gulp = require('gulp');
 var argv = require('minimist')(process.argv.slice(2));
+var replace = require('gulp-replace');
 
 //
 // ENVIRONMENT
 //------------------------------------------------------------------------------------------//
 // @description
 var Environment = {setting: 'development'};
+
+Environment.set = function(module, file) {
+  var base = './'+module;
+
+  return gulp.src(file, {base:base})
+    .pipe(replace(/([a-zA-Z0-9])\w+/g, Environment.setting))
+    .pipe(gulp.dest(base));
+};
 
 //
 // SYSTEMS MANAGEMENT
@@ -60,10 +69,10 @@ var Systems = function() {
 
   // Require - TODO: convert strings into config for reusability
   for(var module in manifest) {
-    var config = require(manifest[module].config);
-
+    // Write environment vars
+    Environment.set(module, manifest[module].env);
     // Create reference to module API.
-    modules[module] = require(manifest[module].module)({environment: config.environments[Environment.setting]});
+    modules[module] = require(manifest[module].module)();
     // Register gulp tasks by system
     gulp.register('systems.'+module, function() { console.log('Available tasks for this system are: ', API.tasks(module)); })
     // Register gulp tasks by system tasks
