@@ -19,12 +19,13 @@ var OS = require('os');
 //------------------------------------------------------------------------------------------//
 // @description
 var Environment = {host: 'localhost', port: 3000};
+
 // Platform awareness
 Environment.platform = {label: OS.platform(), map: {}};
 
 // Feels pointless but let's me use maps for the rest of the implementation
-Environment.platform.label.match('darwin') ?
-  Environment.platform.map[Environment.platform.label] = 'nix' :
+(Environment.platform.label.match('linux') || Environment.platform.label.match('darwin')) ?
+  Environment.platform.map[Environment.platform.label] = OS.platform() :
   Environment.platform.map[Environment.platform.label] = 'win';
 
 /**
@@ -44,9 +45,16 @@ Environment.apply = function(spec) {
  * @type {{nix: string, win: string}}
  */
 var binaries = {
-  nix: 'sh ./bin/nix/app.sh',
+  darwin: 'sh '+__dirname+'/bin/nix/darwin.sh',
+  linux: 'sh '+__dirname+'/bin/nix/linux.sh',
   win: __dirname+'\\bin\\win\\app.bat'
 };
+
+//
+// APP_NAME Platform INIT.
+//------------------------------------------------------------------------------------------//
+// @description
+
 
 //
 // APP_NAME Platform entry.

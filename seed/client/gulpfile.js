@@ -29,8 +29,9 @@ var system = require('./system.json');
 //------------------------------------------------------------------------------------------//
 // @description
 var Binaries = {
-  nix: {tpl: __dirname+'/bin/nix/_app.sh', exec: __dirname+'/bin/nix/app.sh', command: 'sh'},
-  win: {tpl: __dirname+'\\bin\\win\\_app.bat', exec: __dirname+'\\bin\\win\\app.bat', command: ''}
+  darwin: {tpl: __dirname+'/bin/nix/_darwin.sh', exec: __dirname+'/bin/nix/darwin.sh', command: 'sh', base: __dirname+'/bin/nix/'},
+  linux: {tpl: __dirname+'/bin/nix/_linux.sh', exec: __dirname+'/bin/nix/linux.sh', command: 'sh', base: __dirname+'/bin/nix/'},
+  win: {tpl: __dirname+'\\bin\\win\\_app.bat', exec: __dirname+'\\bin\\win\\app.bat', command: '', base: __dirname+'/bin/win/'}
 };
 
 //
@@ -42,7 +43,7 @@ var Environment = {host: 'localhost', port: 3000, placeholder: 'APP_ENV', settin
 
 // Feels pointless but let's me use maps for the rest of the implementation
 (Environment.platform.label.match('darwin') || Environment.platform.label.match('linux')) ?
-  Environment.platform.map[Environment.platform.label] = 'nix' :
+  Environment.platform.map[Environment.platform.label] = OS.platform() :
     Environment.platform.map[Environment.platform.label] = 'win';
 
 Environment.apply = function(env) {
@@ -57,8 +58,9 @@ Environment.apply = function(env) {
  */
 gulp.task('environment.binary', function() {
   var binary = Binaries[Environment.platform.map[Environment.platform.label]];
-  var base = __dirname+'/bin/'+Environment.platform.map[Environment.platform.label];
+  var base = binary.base;
 
+  console.log(binary)
   return gulp.src(binary.tpl)
     .pipe(replace(/APP_ENV/g, Environment.setting))
     .pipe(rename(function(path) {
