@@ -27,16 +27,23 @@ process.chdir(cwd);
 // @description
 var Seed = {
   name: 'gulpNgSeed', // Default name,
-  paths: {origin: __dirname, dest: cwd}
+  paths: {origin: __dirname, dest: cwd, separators: {
+    darwin: '/',
+    linux: '/',
+    win: '\\',
+    win32: '\\',
+    win64: '\\',
+    default: '/'
+  }},
 };
 
 // Name
 Seed.name = argv._[0] || Seed.name;
-Seed.paths.separator = OS.platform().match('darwin')? '/' : '\\';
+Seed.paths.separator = (Seed.paths.separators[OS.platform()] || Seed.paths.separators.default);
 Seed.paths.origin = Seed.paths.origin + Seed.paths.separator + '..' + Seed.paths.separator;
 Seed.paths.src = Seed.paths.origin + 'seed'+ Seed.paths.separator +'**' + Seed.paths.separator + '*';
 Seed.paths.dest = Seed.paths.dest + Seed.paths.separator  +Seed.name;
-
+console.log(OS.platform())
 //
 // SEED TASKS
 //------------------------------------------------------------------------------------------//
@@ -61,6 +68,8 @@ sequence('seed', function() {
   run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'client' + Seed.paths.separator + '.bowerrc ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + '.bowerrc').exec();
   console.log(chalk.cyan.bold('Copying Seed assets...'));
   console.log(chalk.cyan.bold('Running NPM and Bower install...'));
+  run('npm install').exec();
+  run('cd platform && npm install').exec();
   run('cd client && npm install && bower install').exec();
   console.log(chalk.cyan.bold('Done! run gulp serve from your new application!'));
 });

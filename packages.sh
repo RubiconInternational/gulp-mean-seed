@@ -9,3 +9,4 @@ npm install -g gulp-run
 npm install -g minimist@1.1.1
 npm install -g run-sequence@^1.0.2
 npm install -g v8flags@^2.0.3
+npm install -g bower
