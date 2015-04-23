@@ -41,7 +41,7 @@ var Environment = {host: 'localhost', port: 3000, placeholder: 'APP_ENV', settin
     Environment.platform = {label: OS.platform(), map: {}};
 
 // Feels pointless but let's me use maps for the rest of the implementation
-Environment.platform.label.match('darwin') ?
+(Environment.platform.label.match('darwin') || Environment.platform.label.match('linux')) ?
   Environment.platform.map[Environment.platform.label] = 'nix' :
     Environment.platform.map[Environment.platform.label] = 'win';
 
@@ -58,13 +58,11 @@ Environment.apply = function(env) {
 gulp.task('environment.binary', function() {
   var binary = Binaries[Environment.platform.map[Environment.platform.label]];
   var base = __dirname+'/bin/'+Environment.platform.map[Environment.platform.label];
-  console.log(Environment, binary.tpl)
+
   return gulp.src(binary.tpl)
     .pipe(replace(/APP_ENV/g, Environment.setting))
     .pipe(rename(function(path) {
-      console.log(path)
       path.basename = path.basename.split('_')[1];
-      //console.log(path)
     }))
     .pipe(gulp.dest(base));
 });
@@ -92,6 +90,10 @@ gulp.task('environment.app', function() {
 // SCRIPT TASKS
 //------------------------------------------------------------------------------------------//
 // @description Linting, concatenation, etc.
+
+/**
+ * Concat
+ */
 gulp.task('scripts.concat', function() {
   return gulp.src(['app/system/**/*.js', 'app/modules/**/*.js', 'app/env.js', 'app/app.js'])
     .pipe(angularFileSort())
@@ -99,6 +101,9 @@ gulp.task('scripts.concat', function() {
     .pipe(gulp.dest('.tmp'));
 });
 
+/**
+ * Inject
+ */
 gulp.task('scripts.inject', function() {
   var target = gulp.src('app/index.html');
   var sources = gulp.src('.tmp/APP_NAME.js');
@@ -115,6 +120,7 @@ gulp.task('scripts.inject', function() {
 // CONNECT TASKS
 //------------------------------------------------------------------------------------------//
 // @description
+
 
 gulp.task('watch', function() {
   return gulp.watch(['app/app.js', 'app/index.html', 'app/modules/**/*'], function(event) {
@@ -147,6 +153,7 @@ module.exports = function() {
   return {
     up: function() {
       var bin = Binaries[Environment.platform.map[Environment.platform.label]];
+
       run('environment.binary', function() {
         exec(bin.command +' '+ bin.exec).exec();
       });

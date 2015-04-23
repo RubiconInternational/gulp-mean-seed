@@ -150,6 +150,7 @@ gulp.task('systems', function(cb) {
  * Serve
  */
 gulp.task('systems.up', function(cb) {
+  console.log(process);
   Systems.all('up');
   return cb(); // preserve stream
 });
