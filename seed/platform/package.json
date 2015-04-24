@@ -9,10 +9,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "archives": "^1.0.0",
     "body-parser": "^1.12.3",
+    "chalk": "^1.0.0",
     "express": "^4.12.3",
     "gulp": "^3.8.11",
     "gulp-run": "^1.6.7",
-    "mongodb": "^2.0.27"
+    "mongodb": "^2.0.27",
+    "q": "^1.2.0",
+    "run-sequence": "^1.1.0"
   }
 }

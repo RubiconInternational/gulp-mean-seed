@@ -38,7 +38,7 @@ var Binaries = {
 // ENVIRONMENT
 //------------------------------------------------------------------------------------------//
 // @description
-var Environment = {host: 'localhost', port: 3000, placeholder: 'APP_ENV', setting: fs.readFileSync(__dirname+'/.env', {encoding: 'UTF-8'})};
+var Environment = {host: 'localhost', port: 3000, placeholder: 'development', setting: fs.readFileSync(__dirname+'/.env', {encoding: 'UTF-8'})};
     Environment.platform = {label: OS.platform(), map: {}};
 
 // Feels pointless but let's me use maps for the rest of the implementation
@@ -62,7 +62,7 @@ gulp.task('environment.binary', function() {
 
   console.log(binary)
   return gulp.src(binary.tpl)
-    .pipe(replace(/APP_ENV/g, Environment.setting))
+    .pipe(replace(/development/g, Environment.setting))
     .pipe(rename(function(path) {
       path.basename = path.basename.split('_')[1];
     }))

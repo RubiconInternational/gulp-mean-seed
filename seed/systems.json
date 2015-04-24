@@ -1,6 +1,6 @@
 {
   "platform": {
-    "module": "./platform/app.js",
+    "module": "./platform/gulpfile.js",
     "config": "./platform/system.json",
     "env": "./platform/.env"
   },

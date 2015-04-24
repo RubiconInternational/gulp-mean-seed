@@ -1,1 +1,1 @@
-start cmd --login /k "cd client && gulp serve --env APP_ENV"
+start cmd --login /k "cd client && gulp serve --env development"

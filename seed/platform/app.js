@@ -1,7 +1,7 @@
 'use strict';
 
 /***********************************************************************************************************************************************
- *  APP_NAME PLATFORM ENTRY
+ * APP_NAME APPLICATION BINARY
  ***********************************************************************************************************************************************
  * @description
  */
@@ -10,62 +10,53 @@
 // DEPENDENCIES
 //------------------------------------------------------------------------------------------//
 // @description
-var gulp = require('gulp');
-var exec = require('gulp-run');
-var OS = require('os');
+var argv = require('minimist')(process.argv.slice(2));
+var system = require('./system.json');
 
 //
-// ENVIRONMENT
+// APP_NAME NAMESPACE
 //------------------------------------------------------------------------------------------//
 // @description
-var Environment = {host: 'localhost', port: 3000};
-
-// Platform awareness
-Environment.platform = {label: OS.platform(), map: {}};
-
-// Feels pointless but let's me use maps for the rest of the implementation
-(Environment.platform.label.match('linux') || Environment.platform.label.match('darwin')) ?
-  Environment.platform.map[Environment.platform.label] = OS.platform() :
-  Environment.platform.map[Environment.platform.label] = 'win';
-
-/**
- * Apply
- * @description Ingests env config.
- * @param spec
- */
-Environment.apply = function(spec) {
-  for(var prop in spec) {
-    Environment[prop] = spec[prop];
-  }
-};
-
-/**
- * Binaries
- * @description map of binary path dervied via system type.
- * @type {{nix: string, win: string}}
- */
-var binaries = {
-  darwin: 'sh '+__dirname+'/bin/nix/darwin.sh',
-  linux: 'sh '+__dirname+'/bin/nix/linux.sh',
-  win: __dirname+'\\bin\\win\\app.bat'
-};
+var APP_NAME = {Config: {}};
 
 //
-// APP_NAME Platform INIT.
+// APP_NAME CONFIG - Environment
 //------------------------------------------------------------------------------------------//
 // @description
-
+APP_NAME.Config.Environment = system.environments[argv.env];
 
 //
-// APP_NAME Platform entry.
+// APP_NAME CONFIG - DB
 //------------------------------------------------------------------------------------------//
 // @description
-module.exports = function() {
-  // Ingest environment config.
+APP_NAME.Config.DB = {name: 'APP_NAME'};
 
-  return {
-    up: function() {
-      return exec(binaries[Environment.platform.map[Environment.platform.label]]).exec();
-    }
-  }
-};
+//
+// APP_NAME CONFIG - Modules
+//------------------------------------------------------------------------------------------//
+// @description
+APP_NAME.Config.Modules = {path: __dirname+'/modules'};
+
+//
+// APP_NAME LOGGING
+//------------------------------------------------------------------------------------------//
+// @description
+APP_NAME.Logger = require('./lib/logger')(APP_NAME);
+
+//
+// APP_NAME ROUTER
+//------------------------------------------------------------------------------------------//
+// @description
+APP_NAME.Router = require('./lib/router')(APP_NAME);
+
+//
+// APP_NAME DAL
+//------------------------------------------------------------------------------------------//
+// @description
+APP_NAME.DAL = require('archives')(APP_NAME.Config);
+
+//
+// APP_NAME MODULES
+//------------------------------------------------------------------------------------------//
+// @description
+APP_NAME.Modules = require('./lib/modules')(APP_NAME);
