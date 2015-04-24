@@ -12,6 +12,7 @@
     "gulp": "^3.8.11",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.3",
-    "minimist": "^1.1.1"
+    "minimist": "^1.1.1",
+    "mongo-express": "^0.21.0"
   }
 }

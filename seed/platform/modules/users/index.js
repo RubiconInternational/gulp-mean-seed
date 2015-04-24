@@ -7,14 +7,35 @@
  */
 
 module.exports = function(APP_NAME) {
-  // Module namespace.
+  //
+  // MODULE NAMESPACE
+  //------------------------------------------------------------------------------------------//
+  // @description
   var Users = {};
 
-  // Controller
-  Users.controller = require('./users.controller')(APP_NAME.Router);
+  //
+  // MESSAGES
+  //------------------------------------------------------------------------------------------//
+  // @description
+  Users.Messages = require('./users.messages');
 
-  // Model
-  Users.model = require('./users.model')(APP_NAME.DAL);
+  //
+  // MODEL
+  //------------------------------------------------------------------------------------------//
+  // @description
+  Users.Model = require('./users.model')(APP_NAME);
+
+  //
+  // CONTROLLER
+  //------------------------------------------------------------------------------------------//
+  // @description
+  Users.Controller = require('./users.controller')(APP_NAME, Users);
+
+  //
+  // ROUTES
+  //------------------------------------------------------------------------------------------//
+  // @description
+  Users.Routes = require('./users.routes')(APP_NAME, Users);
 
   // API
   return Users;

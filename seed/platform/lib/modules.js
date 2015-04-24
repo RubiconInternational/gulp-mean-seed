@@ -10,19 +10,25 @@ var fs = require('fs');
 module.exports = function(APP_NAME) {
   var Modules = {};
 
-  // Base path o look in.
-  var basepath = APP_NAME.Config.Modules.path;
-  console.log(basepath)
-  // Load modules
-  fs.readdirSync(basepath).forEach(function(module) {
-    var isDir = fs.lstatSync(module).isDirectory();
+  Modules.load = function() {
+    var def = APP_NAME.Utils.q.defer();
 
-    if(isDir) {
-      Modules[module] = require(module);
-    }
-  });
+    // Base path o look in.
+    var basepath = APP_NAME.Config.Modules.path;
+    // Load modules
+    fs.readdirSync(basepath).forEach(function(module) {
+      var path = basepath+'/'+module;
+      var isDir = fs.lstatSync(path).isDirectory();
+      var label = module.charAt(0).toUpperCase() + module.substr(1, Number.MAX_VALUE);
 
-  console.log(Modules);
+      if(isDir) {
+        Modules[label] = require(path)(APP_NAME);
+      }
+    });
+
+    def.resolve();
+    return def.promise;
+  };
 
   return Modules;
 };
