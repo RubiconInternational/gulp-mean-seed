@@ -1,17 +1,14 @@
 'use strict';
 
 /***********************************************************************************************************************************************
- * APP_NAME SYSTEM MODULE
+ * APP_NAME SYSTEM PLATFORM
  ***********************************************************************************************************************************************
- * @description
+ * @description Handles communication between client and platform
  */
-angular.module('APP_NAME.System', [
-    'APP_NAME.System.Structs',
-    'APP_NAME.System.Platform'
-  ])
-  .service('APP_NAME.System', ['APP_NAME.System.Structs', 'APP_NAME.System.Platform', function(Structs, Platform) {
+angular.module('APP_NAME.System.Platform', [])
+  .service('APP_NAME.System.Platform', ['APP_NAME.System.Platform.API', 'APP_NAME.System.Platform.Cache', function(API, Cache) {
     return {
-      Structs: Structs,
-      Platform: Platform
+      API: API,
+      Cache: Cache
     };
   }]);
