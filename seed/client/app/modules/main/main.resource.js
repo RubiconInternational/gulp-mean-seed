@@ -15,6 +15,12 @@ angular.module('APP_NAME.Modules.Main')
     var Resource = {url: Platform.Config.url + '/users'};
 
     //
+    // RESOURCE CACHE
+    //------------------------------------------------------------------------------------------//
+    // @description
+    Platform.Cache.set(Resource.url, {expires: 1000});
+
+    //
     // MAIN RESOURCE API
     //------------------------------------------------------------------------------------------//
     // @description
