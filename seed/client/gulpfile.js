@@ -22,7 +22,9 @@ var exec = require('gulp-run');
 var OS = require('os');
 var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
+var rimraf = require('rimraf');
 var system = require('./system.json');
+var server;
 
 //
 // BINARIES
@@ -92,15 +94,42 @@ gulp.task('environment.app', function() {
 // SCRIPT TASKS
 //------------------------------------------------------------------------------------------//
 // @description Linting, concatenation, etc.
+var Scripts = {};
+    Scripts.name = 'APP_NAME.js';
+    Scripts.config = 'config.js';
+    Scripts.src = ['app/config.js', 'app/system/**/*.js', 'app/modules/**/*.js', 'app/env.js', 'app/app.js'];
+    Scripts.dest = '.tmp';
+
+/**
+ * Clean
+ */
+gulp.task('scripts.clean', function(cb) {
+  rimraf(Scripts.dest + '/' + Scripts.name, function() {
+    cb();
+  });
+});
+
+
+gulp.task('scripts.config', function() {
+  server = require('./server.json');
+
+  return gulp.src(Scripts.config)
+    .pipe(replace(/APP_CONFIG/, JSON.stringify(server)))
+    .pipe(rename(function(path) {
+      path.basename = 'config';
+      path.extname = '.js';
+    }))
+    .pipe(gulp.dest('app'));
+});
 
 /**
  * Concat
  */
 gulp.task('scripts.concat', function() {
-  return gulp.src(['app/system/**/*.js', 'app/modules/**/*.js', 'app/env.js', 'app/app.js'])
+  return gulp.src(Scripts.src)
     .pipe(angularFileSort())
-    .pipe(concat('APP_NAME.js'))
-    .pipe(gulp.dest('.tmp'));
+    .pipe(concat(Scripts.name))
+    .pipe(gulp.dest(Scripts.dest));
 });
 
 /**
@@ -108,15 +137,28 @@ gulp.task('scripts.concat', function() {
  */
 gulp.task('scripts.inject', function() {
   var target = gulp.src('app/index.html');
-  var sources = gulp.src('.tmp/APP_NAME.js');
+  var sources = gulp.src(Scripts.dest + '/' + Scripts.name);
 
   return target.pipe(inject(sources, {relative: true,
     transform: function() {
-      return '<script src="APP_NAME.js"></script>';
+      return '<script src="'+Scripts.name+'"></script>';
     }
   }))
   .pipe(gulp.dest('app'));
 });
+
+//
+// RELOAD TASKS
+//------------------------------------------------------------------------------------------//
+// @description @TODO, make this more map driven.
+
+var Reload = function(file) {
+  if(file.match('.js')) { Reload.scripts(); }
+};
+
+Reload.scripts = function() {
+  run('scripts.clean', 'scripts.concat', 'scripts.inject');
+};
 
 //
 // CONNECT TASKS
@@ -125,7 +167,11 @@ gulp.task('scripts.inject', function() {
 
 
 gulp.task('watch', function() {
-  return gulp.watch(['app/app.js', 'app/index.html', 'app/modules/**/*'], function(event) {
+  return gulp.watch(['app/app.js', 'app/index.html', 'app/modules/**/*', 'app/system/**/*'], function(event) {
+
+    // Run type-driven reload tasks.
+    Reload(event.path);
+
     return gulp.src(event.path)
       .pipe(connect.reload());
   });
@@ -147,7 +193,7 @@ gulp.task('serve', function() {
   Environment.setting = argv.env || 'development';
   Environment.apply(Environment.setting);
 
-  run(['environment.app'], 'scripts.concat', ['scripts.inject', 'connect', 'watch']);
+  run(['environment.app'], 'scripts.config', 'scripts.concat', ['scripts.inject', 'connect', 'watch']);
 });
 
 module.exports = function() {
@@ -155,7 +201,7 @@ module.exports = function() {
   return {
     up: function() {
       var bin = Binaries[Environment.platform.map[Environment.platform.label]];
-
+      console.log(gulp.tasks)
       run('environment.binary', function() {
         exec(bin.command +' '+ bin.exec).exec();
       });

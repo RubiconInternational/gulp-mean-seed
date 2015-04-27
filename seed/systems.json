@@ -9,9 +9,9 @@
     "config": "./client/system.json",
     "env": "./client/.env",
     "requires": {
-      "sever.json": {
+      "server.json": {
         "src": "./platform/system.json",
-        "dest": "./client/app/"
+        "dest": "./client/"
       }
     }
   }

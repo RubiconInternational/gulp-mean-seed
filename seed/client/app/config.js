@@ -1,0 +1,1 @@
+var config = {"environments":{"development":{"host":"localhost","port":7000}}};

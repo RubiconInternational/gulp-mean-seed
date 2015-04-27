@@ -26,4 +26,6 @@ angular.module('APP_NAME.System.Platform')
 
       return def.promise;
     };
+
+    return API;
   }]);

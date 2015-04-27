@@ -12,11 +12,9 @@ angular.module('APP_NAME.Modules.Main', [])
       templateUrl: 'modules/main/main.html'
     });
   }).service('APP_NAME.Modules.Main', [
-    'APP_NAME.Modules.Main.Proxy',
     'APP_NAME.Modules.Main.Model',
-    'APP_NAME.Modules.Main.Resource', function(Proxy, Model, Resource) {
+    'APP_NAME.Modules.Main.Resource', function(Model, Resource) {
     return {
-      Proxy: Proxy,
       Model: Model,
       Resource: Resource
     };

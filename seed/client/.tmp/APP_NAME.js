@@ -10,10 +10,14 @@ angular.module('APP_NAME', [
   'APP_NAME.System',
   'APP_NAME.Modules'
 ]).service('APP_NAME', ['APP_NAME.Modules', 'APP_NAME.System', function(Modules, System) {
-  return {
+  window.APP_NAME = {
     Modules: Modules,
     System: System
   };
+
+  return APP_NAME;
+}]).run(['APP_NAME', function(APP_NAME) {
+
 }]);
 var env = "development";
 'use strict';
@@ -30,11 +34,9 @@ angular.module('APP_NAME.Modules.Main', [])
       templateUrl: 'modules/main/main.html'
     });
   }).service('APP_NAME.Modules.Main', [
-    'APP_NAME.Modules.Main.Proxy',
     'APP_NAME.Modules.Main.Model',
-    'APP_NAME.Modules.Main.Resource', function(Proxy, Model, Resource) {
+    'APP_NAME.Modules.Main.Resource', function(Model, Resource) {
     return {
-      Proxy: Proxy,
       Model: Model,
       Resource: Resource
     };
@@ -47,12 +49,13 @@ angular.module('APP_NAME.Modules.Main', [])
  * @description
  */
 angular.module('APP_NAME.Modules.Main')
-  .service('APP_NAME.Modules.Main.Resource', ['$http', 'APP_NAME.Modules.Main.Proxy', function($http, Proxy) {
+  .service('APP_NAME.Modules.Main.Resource', ['$http', 'APP_NAME.System.Platform', function($http, Platform) {
+    console.log(Platform.Config)
     //
     // MAIN RESOURCE NAMESPACE
     //------------------------------------------------------------------------------------------//
     // @description
-    var Resource = {url: '/users'};
+    var Resource = {url: Platform.Config.url + '/users'};
 
     //
     // MAIN RESOURCE API
@@ -64,7 +67,7 @@ angular.module('APP_NAME.Modules.Main')
      * @returns {*}
      */
     Resource.get = function() {
-      return Proxy.get({method: 'GET', url: Resource.url});
+      return Platform.API.get({url: Resource.url});
     };
 
     /**
@@ -73,7 +76,7 @@ angular.module('APP_NAME.Modules.Main')
      * @returns {*}
      */
     Resource.put = function(data) {
-      return $http({method: 'PUT', url: Resource.url, data: data});
+      return Platform.API.put({url: Resource.url, data: data});
     };
 
     /**
@@ -82,7 +85,7 @@ angular.module('APP_NAME.Modules.Main')
      * @returns {*}
      */
     Resource.post = function(data) {
-      return $http({method: 'POST', url: Resource.url, data: data});
+      return Platform.API.post({url: Resource.url, data: data});
     };
 
     /**
@@ -90,34 +93,11 @@ angular.module('APP_NAME.Modules.Main')
      * @returns {*}
      */
     Resource.delete = function() {
-      return $http({method: 'DELETE', url: Resource.url});
+      return Platform.API.delete({url: Resource.url});
     };
 
     // Expose resource
     return Resource;
-  }]);
-'use strict';
-
-/***********************************************************************************************************************************************
- * APP_NAME MAIN MODULE HTTP BACKEND
- ***********************************************************************************************************************************************
- * @description Remember to remove this file when starting actual development as it will short circuit ALL $http requests.
- */
-angular.module('APP_NAME.Modules.Main')
-  .service('APP_NAME.Modules.Main.Proxy', ['$q', '$timeout', function($q, $timeout) {
-    var users = [{name: 'Ben', age: 12}, {name: 'mark', age: 23}, {name: 'Jenny', age: 29}];
-
-    return {
-      get: function() {
-        var def = $q.defer();
-
-        $timeout(function() {
-          def.resolve(users);
-        }, 1500);
-
-        return def.promise;
-      }
-    };
   }]);
 'use strict';
 
@@ -137,6 +117,7 @@ angular.module('APP_NAME.Modules.Main')
     Resource.get().then(function(users) {
       Model.users.clean().fill(users);
     });
+
 
     // Expose Model
     return Model;
@@ -284,15 +265,139 @@ angular.module('APP_NAME.System.Structs')
 'use strict';
 
 /***********************************************************************************************************************************************
+ * APP_NAME SYSTEM PLATFORM
+ ***********************************************************************************************************************************************
+ * @description Handles communication between client and platform
+ */
+angular.module('APP_NAME.System.Platform', [])
+  .service('APP_NAME.System.Platform', [
+    'APP_NAME.System.Platform.API',
+    'APP_NAME.System.Platform.Cache',
+    'APP_NAME.System.Platform.Config', function(API, Cache, Config) {
+
+    return {
+      API: API,
+      Cache: Cache,
+      Config: Config
+    };
+  }]);
+'use strict';
+
+/***********************************************************************************************************************************************
+ * APP_NAME SYSTEM PLATFORM CONFIG
+ ***********************************************************************************************************************************************
+ * @description
+ */
+angular.module('APP_NAME.System.Platform')
+  .service('APP_NAME.System.Platform.Config', ['$http', function($http) {
+    var Config = config.environments[env];
+
+    //
+    // CONFIG MEMBERS
+    //------------------------------------------------------------------------------------------//
+    // @description
+    Config.url = 'http://' + Config.host + ':'+ Config.port;
+
+
+    return Config;
+  }]);
+'use strict';
+
+/***********************************************************************************************************************************************
+ * APP_NAME SYSTEM PLATFORM
+ ***********************************************************************************************************************************************
+ * @description
+ */
+angular.module('APP_NAME.System.Platform')
+  .service('APP_NAME.System.Platform.Cache', ['$q', function($q) {
+    var Cache = {__cache__:{}};
+
+    /**
+     * GET
+     * @param url
+     * @returns {*}
+     */
+    Cache.get = function(url, options) {
+      var def = $q.defer();
+      var cache = this.__cache__[url];
+
+      if(cache) {
+        def.resolve(cache);
+      } else {
+        def.reject();
+      }
+
+      return def.promise;
+    };
+
+    /**
+     * SET
+     * @param url
+     * @param data
+     * @returns {*}
+     */
+    Cache.set = function(url, data) {
+      var def = $q.defer();
+
+      try {
+        this.__cache__[url] = data;
+      } catch(e) {
+        def.reject('Could net set cache for: ', url, 'with: ', data);
+      }
+
+      def.resolve(this.__cache__[url]);
+
+      return def.promise;
+    };
+
+    return Cache;
+  }]);
+'use strict';
+
+/***********************************************************************************************************************************************
+ * APP_NAME SYSTEMS PLATFORM API
+ ***********************************************************************************************************************************************
+ * @description
+ */
+angular.module('APP_NAME.System.Platform')
+  .service('APP_NAME.System.Platform.API', ['APP_NAME.System.Platform.Cache', '$http', '$q', function(Cache, $http, $q) {
+    var API = {};
+
+    API.get = function(spec) {
+      var def = $q.defer();
+
+      Cache.get(spec.url, spec.cache).then(function(data) {
+        def.resolve(data);
+      }, function() {
+        $http(spec).success(function(data) {
+          Cache.set(spec.url, data).then(function(data) {
+            def.resolve(data);
+          }, function(err) {
+            def.reject(err);
+          });
+        });
+      });
+
+      return def.promise;
+    };
+
+    return API;
+  }]);
+'use strict';
+
+/***********************************************************************************************************************************************
  * APP_NAME SYSTEM MODULE
  ***********************************************************************************************************************************************
  * @description
  */
 angular.module('APP_NAME.System', [
-    'APP_NAME.System.Structs'
+    'APP_NAME.System.Structs',
+    'APP_NAME.System.Platform'
   ])
-  .service('APP_NAME.System', ['APP_NAME.System.Structs', function(Structs) {
+  .service('APP_NAME.System', ['APP_NAME.System.Structs', 'APP_NAME.System.Platform', function(Structs, Platform) {
     return {
-      Structs: Structs
+      Structs: Structs,
+      Platform: Platform
     };
   }]);
+var config = {"environments":{"development":{"host":"localhost","port":7000}}};

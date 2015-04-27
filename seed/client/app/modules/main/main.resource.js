@@ -6,12 +6,13 @@
  * @description
  */
 angular.module('APP_NAME.Modules.Main')
-  .service('APP_NAME.Modules.Main.Resource', ['$http', 'APP_NAME.Modules.Main.Proxy', function($http, Proxy) {
+  .service('APP_NAME.Modules.Main.Resource', ['$http', 'APP_NAME.System.Platform', function($http, Platform) {
+    console.log(Platform.Config)
     //
     // MAIN RESOURCE NAMESPACE
     //------------------------------------------------------------------------------------------//
     // @description
-    var Resource = {url: '/users'};
+    var Resource = {url: Platform.Config.url + '/users'};
 
     //
     // MAIN RESOURCE API
@@ -23,7 +24,7 @@ angular.module('APP_NAME.Modules.Main')
      * @returns {*}
      */
     Resource.get = function() {
-      return Proxy.get({method: 'GET', url: Resource.url});
+      return Platform.API.get({url: Resource.url});
     };
 
     /**
@@ -32,7 +33,7 @@ angular.module('APP_NAME.Modules.Main')
      * @returns {*}
      */
     Resource.put = function(data) {
-      return $http({method: 'PUT', url: Resource.url, data: data});
+      return Platform.API.put({url: Resource.url, data: data});
     };
 
     /**
@@ -41,7 +42,7 @@ angular.module('APP_NAME.Modules.Main')
      * @returns {*}
      */
     Resource.post = function(data) {
-      return $http({method: 'POST', url: Resource.url, data: data});
+      return Platform.API.post({url: Resource.url, data: data});
     };
 
     /**
@@ -49,7 +50,7 @@ angular.module('APP_NAME.Modules.Main')
      * @returns {*}
      */
     Resource.delete = function() {
-      return $http({method: 'DELETE', url: Resource.url});
+      return Platform.API.delete({url: Resource.url});
     };
 
     // Expose resource

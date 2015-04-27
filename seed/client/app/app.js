@@ -10,8 +10,12 @@ angular.module('APP_NAME', [
   'APP_NAME.System',
   'APP_NAME.Modules'
 ]).service('APP_NAME', ['APP_NAME.Modules', 'APP_NAME.System', function(Modules, System) {
-  return {
+  window.APP_NAME = {
     Modules: Modules,
     System: System
   };
+
+  return APP_NAME;
+}]).run(['APP_NAME', function(APP_NAME) {
+
 }]);
