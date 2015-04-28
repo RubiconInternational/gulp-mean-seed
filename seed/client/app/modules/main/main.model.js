@@ -12,20 +12,20 @@ angular.module('APP_NAME.Modules.Main')
     // MAIN MODEL NAMESPACE
     //------------------------------------------------------------------------------------------//
     // @description
-    var Model = {users: new System.Structs.Array()};
+    var Model = new System.Valence.Model('Main');
 
-    Model.init = function() {
-      Resource.get().then(function(users) {
-        Model.users.clean().fill(users);
-      });
-    };
+    // Add/bind resources
+    for(var resource in Resource) {
+       Model.Resource(Resource[resource]).attach().bind();
+    }
 
-    Model.init();
+    console.log(Model);
 
+    // Load resources
+    for(var resource in Resource) {
+      Resource[resource].get();
+    }
 
-    setTimeout(function() {
-      Model.init();
-    }, 5000);
     // Expose Model
     return Model;
   }]);

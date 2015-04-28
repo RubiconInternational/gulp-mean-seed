@@ -1,17 +1,18 @@
 'use strict';
 
+// Window namespace
+window.Valence = {Models: {}, Resources: {}, Cache: {}};
+
 /***********************************************************************************************************************************************
- * APP_NAME SYSTEM MODULE
+ * VALENCE
  ***********************************************************************************************************************************************
- * @description
+ * @description Create the module and Valence namespace.
  */
-angular.module('APP_NAME.System', [
-    'APP_NAME.System.Config',
-    'Valence'
-  ])
-  .service('APP_NAME.System', ['Valence', 'APP_NAME.System.Config', function(Valence, Config) {
+angular.module('Valence', [])
+  .service('Valence', ['Valence.Model', 'Valence.Resource', function(Model, Resource) {
+
     return {
-      Valence: Valence,
-      Config: Config
+      Model: Model,
+      Resource: Resource
     };
   }]);

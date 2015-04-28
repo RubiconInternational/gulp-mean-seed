@@ -8,7 +8,7 @@
     </header>
     <div>
       <ul>
-        <li ng-repeat="user in Model.users">
+        <li ng-repeat="user in Model.data.users">
           <ul>
             <li>Name: {{user.name}}</li>
             <li>Age: {{user.age}}</li>
@@ -17,4 +17,12 @@
       </ul>
     </div>
   </div>
+</div>
+
+<div>
+  Actions
+  <button ng-click="Model.resources.users.attach()">Attach</button>
+  <button ng-click="Model.resources.users.detach()">Detach</button>
+  <button ng-click="Model.resources.users.bind()">Bind</button>
+  <button ng-click="Model.resources.users.unbind()">Unbind</button>
 </div>

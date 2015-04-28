@@ -1,0 +1,78 @@
+'use strict';
+
+/***********************************************************************************************************************************************
+ * VALENCE MODEL
+ ***********************************************************************************************************************************************
+ * @description
+ */
+angular.module('Valence')
+  .service('Valence.Model', ['Valence.Resource', function(Resource) {
+
+    //
+    // CLOSURE NAMESPACE
+    //------------------------------------------------------------------------------------------//
+    // @description
+
+    var Valence = {};
+
+    //
+    // VALENCE MODEL
+    //------------------------------------------------------------------------------------------//
+    // @description
+
+    Valence.Model = function(name, opts) {
+      this.name = name;
+      this.opts = _.merge(this.defaults, opts);
+      this.resources = {};
+      this.data = {};
+
+      // Expose to debugger.
+      window.Valence.Models[name] = this;
+
+      return this;
+    };
+
+    /**
+     * Valence Model Defaults.
+     * @type {{}}
+     */
+    Valence.Model.prototype.defaults = {};
+
+    /**
+     * Resource
+     *
+     * Creates a new resource for the Model instance.
+     * @param name
+     * @param opts
+     * @constructor
+     */
+    Valence.Model.prototype.Resource = function(resource) {
+      var self = this;
+
+      if(!resource instanceof Resource) {
+        throw 'Resource must by of type Valence.Resource, was given: '+ resource;
+      }
+
+      return {
+        __resource__: resource,
+        attach: function() {
+          self.resources[resource.name] = this;
+          return this;
+        },
+        detach: function() {
+          delete self.resources[resource.name];
+          return this;
+        },
+        bind: function() {
+          self.data[resource.name] = resource.data;
+          return this;
+        },
+        unbind: function() {
+          delete self.data[resource.name];
+          return this;
+        }
+      }
+    };
+
+    return Valence.Model;
+  }]);

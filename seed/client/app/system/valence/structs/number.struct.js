@@ -1,17 +1,13 @@
 'use strict';
 
 /***********************************************************************************************************************************************
- * APP_NAME SYSTEM MODULE
+ * APP_NAME SYSTEM STRUCT NUMBER
  ***********************************************************************************************************************************************
  * @description
  */
-angular.module('APP_NAME.System', [
-    'APP_NAME.System.Config',
-    'Valence'
-  ])
-  .service('APP_NAME.System', ['Valence', 'APP_NAME.System.Config', function(Valence, Config) {
-    return {
-      Valence: Valence,
-      Config: Config
-    };
-  }]);
+angular.module('Valence')
+  .service('Valence.Structs.Number', function() {
+    var data = {number: 0};
+
+    return data;
+  });
