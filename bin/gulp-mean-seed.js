@@ -66,6 +66,8 @@ sequence('seed', function() {
   process.chdir(cwd+Seed.paths.separator+Seed.name);
   console.log(chalk.cyan.bold('Copying bowerrc...'));
   run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'client' + Seed.paths.separator + '.bowerrc ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + '.bowerrc').exec();
+  run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'client' + Seed.paths.separator + '.env ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + 'client' + Seed.paths.separator + '.env').exec();
+  run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'platform' + Seed.paths.separator + '.env ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + 'platform'+ Seed.paths.separator + '.env').exec();
   console.log(chalk.cyan.bold('Copying Seed assets...'));
   console.log(chalk.cyan.bold('Running NPM and Bower install...'));
   run('npm install').exec();
