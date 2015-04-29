@@ -92,9 +92,13 @@ At the current version, the subsystems are: `platform` and `client`.
 
 ### MongoDB
 
-On Windows machines, the mongo install does not add the binaries to your PATH. There for in the seed artificat, please update the paths to match where your shell and daemon binaries are located.
+On Windows machines, the mongo install does not add the binaries to your PATH. Therefore in the seed artifact, please update the paths to match where your shell and daemon binaries are located.
 
-I recommend using `C:\mongodb` as your install site.
+The file to update is located here: `./platform/bin/_app.bat`
+
+Make sure to update the one with the underscore.
+
+I recommend using `C:\mongodb` as your install site. If you install there, you don't have to change anything.
 
 On Macintosh systems, I recommend `homebrew` to install b/c it's just easyy. In any case, you MUST ensure that both `mongod` and `mongo` are in your PATH.
 
