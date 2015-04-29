@@ -21,8 +21,20 @@
 
 <div>
   Actions
-  <button ng-click="Model.resources.users.attach()">Attach</button>
-  <button ng-click="Model.resources.users.detach()">Detach</button>
-  <button ng-click="Model.resources.users.bind()">Bind</button>
-  <button ng-click="Model.resources.users.unbind()">Unbind</button>
+  <button ng-click="Model.__actions__.users.attach()">Attach</button>
+  <button ng-click="Model.__actions__.users.detach()">Detach</button>
+  <button ng-click="Model.__actions__.users.bind()">Bind</button>
+  <button ng-click="Model.__actions__.users.unbind()">Unbind</button>
+</div>
+
+<div>
+  Model Data:
+  <br/>
+  {{Model.data}}
+</div>
+
+<div>
+  Model resources:
+  <br/>
+  {{Model.resources}}
 </div>

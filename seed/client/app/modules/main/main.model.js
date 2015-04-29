@@ -13,18 +13,18 @@ angular.module('APP_NAME.Modules.Main')
     //------------------------------------------------------------------------------------------//
     // @description
     var Model = new System.Valence.Model('Main');
+        Model.__actions__ = {};
 
     // Add/bind resources
     for(var resource in Resource) {
-       Model.Resource(Resource[resource]).attach().bind();
+      Model.__actions__[resource] = Model.Resource(Resource[resource]).attach().bind();
     }
-
-    console.log(Model);
 
     // Load resources
     for(var resource in Resource) {
       Resource[resource].get();
     }
+
 
     // Expose Model
     return Model;

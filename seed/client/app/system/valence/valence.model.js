@@ -61,6 +61,7 @@ angular.module('Valence')
         },
         detach: function() {
           delete self.resources[resource.name];
+
           return this;
         },
         bind: function() {
@@ -68,6 +69,7 @@ angular.module('Valence')
           return this;
         },
         unbind: function() {
+          console.log(self.data)
           delete self.data[resource.name];
           return this;
         }
