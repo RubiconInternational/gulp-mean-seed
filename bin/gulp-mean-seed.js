@@ -108,7 +108,7 @@ sequence('seed', function() {
                     console.log('\n');
 
                     // On macs it's in all caps ...sigh.
-                    if((process.env.Path && !process.env.Path.match('mongo')) || (prcess.env.PATH && !process.env.Path.match('mongo'))) {
+                    if((process.env.Path && !process.env.Path.match('mongo')) || (process.env.PATH && !process.env.PATH.match('mongo'))) {
                       console.log(CLI.prompt, chalk.red.bold('NOTICE: MONGO NOT IN PATH'));
                       console.log(CLI.prompt, chalk.red.bold('\t If you need help installing mongo: http://docs.mongodb.org/manual/installation/'));
                     }
