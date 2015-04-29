@@ -88,6 +88,16 @@ At the current version, the subsystems are: `platform` and `client`.
     from scratch and therefor will not just throw random shit into it. The seed app comes packaged with a full-stack stub of a
    `users` module. Therefore, if you wish to see some end-to-end data transfer, feel free to seed the DB with the mock users we provide.
 
+## Configuration
+
+### MongoDB
+
+On Windows machines, the mongo install does not add the binaries to your PATH. There for in the seed artificat, please update the paths to match where your shell and daemon binaries are located.
+
+I recommend using `C:\mongodb` as your install site.
+
+On Macintosh systems, I recommend `homebrew` to install b/c it's just easyy. In any case, you MUST ensure that both `mongod` and `mongo` are in your PATH.
+
 ## Context
 This project was originally built for my co-workers who wanted to see how I structure a full-stack JS application.
 It is fairly opinionated and contains things like `dependency injection namespaceing` that will probably be confusing without an explanation.
