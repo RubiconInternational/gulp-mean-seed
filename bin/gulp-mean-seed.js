@@ -14,6 +14,7 @@ var OS = require('os');
 var run = require('gulp-run');
 var cwd = argv.cwd || process.cwd();
 var chalk = require('chalk');
+var art = require('ascii-art');
 
 //
 // SET UP
@@ -27,6 +28,8 @@ process.chdir(cwd);
 // @description
 var CLI = {};
     CLI.prompt = chalk.bold.underline.magenta('GULP-MEAN-SEED: ');
+    CLI.message = chalk.bold.cyan;
+    CLI.special = chalk.bold.underline.magenta;
 
 //
 // SEED CONFIG
@@ -56,7 +59,13 @@ Seed.paths.dest = Seed.paths.dest + Seed.paths.separator  +Seed.name;
 //------------------------------------------------------------------------------------------//
 // @description
 gulp.task('seed', function() {
-  console.log(CLI.prompt, chalk.cyan.bold('Copying Seed assets...'));
+  art.font('GULP-MEAN-SEED', 'Doom', 'magenta', function(rendered) {
+    console.log(rendered);
+    console.log(CLI.prompt, CLI.message('Thank you for using GULP-MEAN-SEED! \n'));
+    console.log(CLI.prompt, CLI.message('Creating App: ', CLI.special(Seed.name)), '\n');
+    console.log(CLI.prompt, CLI.message('Copying Seed assets...'));
+  });
+
   return gulp.src(Seed.paths.src)
     .pipe(replace(/APP_NAME/g, Seed.name))
     .pipe(gulp.dest(Seed.paths.dest));
@@ -69,9 +78,9 @@ gulp.task('seed', function() {
 // @description
 sequence('seed', function() {
   // TODO: make this not horrible.
-  console.log(chalk.cyan.bold(CLI.prompt, chalk.bold.cyan('Done.')));
+  console.log(CLI.message(CLI.prompt, chalk.bold.cyan('Done.')));
   process.chdir(cwd+Seed.paths.separator+Seed.name);
-  console.log(CLI.prompt, chalk.cyan.bold('Copying config files...'));
+  console.log(CLI.prompt, CLI.message('Copying config files...'));
 
   run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'client' + Seed.paths.separator + '.bowerrc ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + '.bowerrc')
     .exec(function() {
@@ -79,22 +88,22 @@ sequence('seed', function() {
         .exec(function() {
           run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'platform' + Seed.paths.separator + '.env ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + 'platform'+ Seed.paths.separator + '.env')
             .exec(function() {
-              console.log(CLI.prompt, chalk.cyan.bold('Done!'));
-              console.log(CLI.prompt, chalk.cyan.bold('Running NPM and Bower install...'));
+              console.log(CLI.prompt, CLI.message('Done!'));
+              console.log(CLI.prompt, CLI.message('Running NPM and Bower install...'));
 
               run('npm install').exec(function() {
                 run('cd platform && npm install').exec(function() {
                   run('cd client && npm install && bower install').exec(function() {
                     console.log('\n');
-                    console.log(CLI.prompt, chalk.cyan.bold('Done!'));
-                    console.log(CLI.prompt,  chalk.cyan.bold('You can now run: '), chalk.underline.bold.green('`gulp systems.up`'),  chalk.cyan.bold(' from the root of your new application!'));
+                    console.log(CLI.prompt, CLI.message('Done!'));
+                    console.log(CLI.prompt,  CLI.message('You can now run: '), chalk.underline.bold.green('`gulp systems.up`'),  CLI.message(' from the root of your new application!'));
                     console.log('\n');
                     console.log(CLI.prompt, chalk.red.bold('NOTICE: '));
                     console.log(CLI.prompt, chalk.red.bold('The seed app demonstrates client/server communication with a stubbed out "users" module and API'));
                     console.log(CLI.prompt, chalk.red.bold('GULP-MEAN-SEED does not want to assume interference with a potentially existing users collection.'));
                     console.log(CLI.prompt, chalk.red.bold('Therefore, if you wish to see the mock users implementation, please run the following:'));
                     console.log(CLI.prompt, chalk.green.bold('$~ cd /path/to/APP_NAME/platform && gulp mogo.seed'));
-                    console.log(CLI.prompt, chalk.cyan.bold('Enjoy using GULP-MEAN-SEED'));
+                    console.log(CLI.prompt, CLI.message('Enjoy using GULP-MEAN-SEED'));
                   });
                 });
               });

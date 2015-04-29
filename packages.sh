@@ -3,6 +3,7 @@
 
 #stop gap until i figure out why ./bin cant find any modules.
 npm install -g chalk
+npm install -g ascii-art
 npm install -g gulp
 npm install -g gulp-replace
 npm install -g gulp-run
