@@ -1,6 +1,22 @@
 # gulp-mean-seed
 Gulp generator for MEAN stack apps.
 
+## Dependencies
+    
+### Global
+
+* `nodejs`
+* `npm`
+* `mongodb`
+
+#### Windows
+
+* Most of the shell commands are windows friendly. However it is recommended that you install `git-bash` or something
+  so that certain *Nix utilities are in your PATH.
+
+#### Mac
+* The mongodb package uses a C compiler that requires `x-code`
+
 ## Install
 Make sure to install globally.
 `npm install -g gulp-mean-seed`
