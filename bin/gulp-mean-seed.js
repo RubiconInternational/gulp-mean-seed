@@ -22,6 +22,13 @@ var chalk = require('chalk');
 process.chdir(cwd);
 
 //
+// CLI
+//------------------------------------------------------------------------------------------//
+// @description
+var CLI = {};
+    CLI.prompt = chalk.bold.underline.magenta('GULP-MEAN-SEED: ');
+
+//
 // SEED CONFIG
 //------------------------------------------------------------------------------------------//
 // @description
@@ -34,7 +41,7 @@ var Seed = {
     win32: '\\',
     win64: '\\',
     default: '/'
-  }},
+  }}
 };
 
 // Name
@@ -43,13 +50,13 @@ Seed.paths.separator = (Seed.paths.separators[OS.platform()] || Seed.paths.separ
 Seed.paths.origin = Seed.paths.origin + Seed.paths.separator + '..' + Seed.paths.separator;
 Seed.paths.src = Seed.paths.origin + 'seed'+ Seed.paths.separator +'**' + Seed.paths.separator + '*';
 Seed.paths.dest = Seed.paths.dest + Seed.paths.separator  +Seed.name;
-console.log(OS.platform())
+
 //
 // SEED TASKS
 //------------------------------------------------------------------------------------------//
 // @description
 gulp.task('seed', function() {
-  console.log(chalk.cyan.bold('Copying Seed assets...'));
+  console.log(CLI.prompt, chalk.cyan.bold('Copying Seed assets...'));
   return gulp.src(Seed.paths.src)
     .pipe(replace(/APP_NAME/g, Seed.name))
     .pipe(gulp.dest(Seed.paths.dest));
@@ -61,18 +68,38 @@ gulp.task('seed', function() {
 //------------------------------------------------------------------------------------------//
 // @description
 sequence('seed', function() {
-  // Convert the following into a shell script for ease in synchronicity.
-  console.log(chalk.cyan.bold('Done.'));
+  // TODO: make this not horrible.
+  console.log(chalk.cyan.bold(CLI.prompt, chalk.bold.cyan('Done.')));
   process.chdir(cwd+Seed.paths.separator+Seed.name);
-  console.log(chalk.cyan.bold('Copying bowerrc...'));
-  run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'client' + Seed.paths.separator + '.bowerrc ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + '.bowerrc').exec();
-  run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'client' + Seed.paths.separator + '.env ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + 'client' + Seed.paths.separator + '.env').exec();
-  run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'platform' + Seed.paths.separator + '.env ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + 'platform'+ Seed.paths.separator + '.env').exec();
-  console.log(chalk.cyan.bold('Copying Seed assets...'));
-  console.log(chalk.cyan.bold('Running NPM and Bower install...'));
-  run('npm install').exec();
-  run('cd platform && npm install').exec();
-  run('cd client && npm install && bower install').exec();
-  console.log(chalk.cyan.bold('Done! run gulp serve from your new application!'));
+  console.log(CLI.prompt, chalk.cyan.bold('Copying config files...'));
+
+  run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'client' + Seed.paths.separator + '.bowerrc ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + '.bowerrc')
+    .exec(function() {
+      run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'client' + Seed.paths.separator + '.env ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + 'client' + Seed.paths.separator + '.env')
+        .exec(function() {
+          run('cp -a '+ Seed.paths.origin + 'seed'+Seed.paths.separator +'platform' + Seed.paths.separator + '.env ' + cwd + Seed.paths.separator + Seed.name + Seed.paths.separator + 'platform'+ Seed.paths.separator + '.env')
+            .exec(function() {
+              console.log(CLI.prompt, chalk.cyan.bold('Done!'));
+              console.log(CLI.prompt, chalk.cyan.bold('Running NPM and Bower install...'));
+
+              run('npm install').exec(function() {
+                run('cd platform && npm install').exec(function() {
+                  run('cd client && npm install && bower install').exec(function() {
+                    console.log('\n');
+                    console.log(CLI.prompt, chalk.cyan.bold('Done!'));
+                    console.log(CLI.prompt,  chalk.cyan.bold('You can now run: '), chalk.underline.bold.green('`gulp systems.up`'),  chalk.cyan.bold(' from the root of your new application!'));
+                    console.log('\n');
+                    console.log(CLI.prompt, chalk.red.bold('NOTICE: '));
+                    console.log(CLI.prompt, chalk.red.bold('The seed app demonstrates client/server communication with a stubbed out "users" module and API'));
+                    console.log(CLI.prompt, chalk.red.bold('GULP-MEAN-SEED does not want to assume interference with a potentially existing users collection.'));
+                    console.log(CLI.prompt, chalk.red.bold('Therefore, if you wish to see the mock users implementation, please run the following:'));
+                    console.log(CLI.prompt, chalk.green.bold('$~ cd /path/to/APP_NAME/platform && gulp mogo.seed'));
+                    console.log(CLI.prompt, chalk.cyan.bold('Enjoy using GULP-MEAN-SEED'));
+                  });
+                });
+              });
+          });
+        });
+    });
 });
 
