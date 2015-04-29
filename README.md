@@ -14,9 +14,9 @@ An example workflow is as follows:
 
     $~ npm install -g gulp-mean-seed
     $ cd ~/Sites
-    $ gulp-mean-seed angularSeedApp
-    $ cd angularSeedApp
-    $ gulp serve
+    $ gulp-mean-seed meanSeedApp
+    $ cd meanSeedApp
+    $ gulp systems.up
 
 ## gulp-mean-seed API
 
@@ -57,13 +57,20 @@ At the current version, the subsystems are: `platform` and `client`.
 `gulp systems.up` -
     This will launch all available systems.
 
-`gulp systems.build` -
+`gulp systems.build` - TBD
    This will build all available systems according to the provided configurations.
 
-`gulp systems.deploy` -
+`gulp systems.deploy` - TBD
     This will deploy all available systems to their mandated locations.
 
 ****
+
+#### API - MONGO
+
+`gulp mongo.seed` -
+    This command has to be executed inside of `./platform`. GULP-MEAN-SEED does not want to assume that it is creating a DB
+    from scratch and therefor will not just throw random shit into it. The seed app comes packaged with a full-stack stub of a
+   `users` module. Therefore, if you wish to see some end-to-end data transfer, feel free to seed the DB with the mock users we provide.
 
 ## Context
 This project was originally built for my co-workers who wanted to see how I structure a full-stack JS application.
