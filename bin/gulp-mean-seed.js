@@ -91,19 +91,40 @@ sequence('seed', function() {
               console.log(CLI.prompt, CLI.message('Done!'));
               console.log(CLI.prompt, CLI.message('Running NPM and Bower install...'));
 
-              run('npm install').exec(function() {
+              run('npm install').exec('test', function() {
                 run('cd platform && npm install').exec(function() {
                   run('cd client && npm install && bower install').exec(function() {
                     console.log('\n');
+                    console.log(CLI.prompt, chalk.red.bold('NOTICE: MONGO BINARIES'));
+                    console.log(CLI.prompt, chalk.red.bold('\t *nix: '));
+                    console.log(CLI.prompt, chalk.red.bold('\t \t GULP-MEAN-SEED expects both `mongod` and `mongo` to be in your path.'));
+
+                    console.log(CLI.prompt, chalk.red.bold('\t Windows: '));
+                    console.log(CLI.prompt, chalk.red.bold('\t \t GULP-MEAN-SEED needs to know the path to your mongo binaries.'));
+                    console.log(CLI.prompt, chalk.red.bold('\t Please change them in: '), CLI.special('`./platform/bin/win/_app.bat`'));
+                    console.log(CLI.prompt, chalk.red.bold('\t \t 1: THIS IS IN THE *GENERATED* APP, NOT THE SOURCE'));
+                    console.log(CLI.prompt, chalk.red.bold('\t \t 2: BE SURE IT IS: _app.bat'));
+                    console.log(CLI.prompt, chalk.red.bold('\t \t 2: DO NOT EDIT THE APP_ENV CONSTANT'));
+                    console.log('\n');
+
+                    if(!process.env.Path.match('mongo') && OS.platform === ('darwin' || 'linux')) {
+                      console.log(CLI.prompt, chalk.red.bold('NOTICE: MONGO NOT IN PATH'));
+                      console.log(CLI.prompt, chalk.red.bold('\t If you need help installing mongo: http://docs.mongodb.org/manual/installation/'));
+                    }
+
+                    console.log('\n');
+                    console.log(CLI.prompt, chalk.red.bold('NOTICE: SEED DATA'));
+                    console.log(CLI.prompt, chalk.red.bold('\t The seed app demonstrates client/server communication with a stubbed out "users" module and API'));
+                    console.log(CLI.prompt, chalk.red.bold('\t GULP-MEAN-SEED does not want to assume interference with a potentially existing users collection.'));
+                    console.log(CLI.prompt, chalk.red.bold('\t Therefore, if you wish to see the mock users implementation, please run the following:'));
+                    console.log(CLI.prompt, chalk.green.bold('\t $~ cd /path/to/APP_NAME/platform && gulp mongo.seed'));
+
+                    console.log('\n');
                     console.log(CLI.prompt, CLI.message('Done!'));
                     console.log(CLI.prompt,  CLI.message('You can now run: '), chalk.underline.bold.green('`gulp systems.up`'),  CLI.message(' from the root of your new application!'));
+
                     console.log('\n');
-                    console.log(CLI.prompt, chalk.red.bold('NOTICE: '));
-                    console.log(CLI.prompt, chalk.red.bold('The seed app demonstrates client/server communication with a stubbed out "users" module and API'));
-                    console.log(CLI.prompt, chalk.red.bold('GULP-MEAN-SEED does not want to assume interference with a potentially existing users collection.'));
-                    console.log(CLI.prompt, chalk.red.bold('Therefore, if you wish to see the mock users implementation, please run the following:'));
-                    console.log(CLI.prompt, chalk.green.bold('$~ cd /path/to/APP_NAME/platform && gulp mogo.seed'));
-                    console.log(CLI.prompt, CLI.message('Enjoy using GULP-MEAN-SEED'));
+                    console.log(CLI.prompt, CLI.message('Enjoy using GULP-MEAN-SEED!'));
                   });
                 });
               });
