@@ -19,11 +19,17 @@ var system = require('./system.json');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 var argv = require('minimist')(process.argv.slice(2));
+var archives = require('archives')({DB: {name: 'APP_NAME'}});
+var chalk = require('chalk');
 
 //
 // ENVIRONMENT
 //------------------------------------------------------------------------------------------//
 // @description
+var CLI = {};
+    CLI.prompt = chalk.magenta.bold.underline('GULP-MEAN-SEED: ');
+    CLI.message = chalk.bold.cyan;
+
 //
 // BINARIES
 //------------------------------------------------------------------------------------------//
@@ -38,6 +44,7 @@ var Binaries = {
 // ENVIRONMENT
 //------------------------------------------------------------------------------------------//
 // @description
+
 var Environment = {host: 'localhost', port: 3000, placeholder: 'development', setting: fs.readFileSync(__dirname+'/.env', {encoding: 'UTF-8'})};
 Environment.platform = {label: OS.platform(), map: {}};
 
@@ -66,6 +73,27 @@ gulp.task('environment.binary', function() {
       path.basename = path.basename.split('_')[1];
     }))
     .pipe(gulp.dest(base));
+});
+
+//
+// MONGO SEED TASKS !! CAUTION !!
+//------------------------------------------------------------------------------------------//
+// @description
+gulp.task('mongo.seed', function(cb) {
+  console.log(CLI.prompt, CLI.message('Seeding APP_NAME DB...'));
+  var users = require('./mocks/users.json');
+  var collection;
+
+  archives.start().then(function() {
+    collection = archives('users');
+
+    collection.create({record: users}).then(function() {
+      console.log(CLI.prompt, CLI.message('Done.'));
+      console.log(CLI.prompt, CLI.message('APP_NAME DB now has: ' + users.length +' users.'));
+      cb();
+      process.exit(0);
+    });
+  });
 });
 
 //
