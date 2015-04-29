@@ -107,7 +107,8 @@ sequence('seed', function() {
                     console.log(CLI.prompt, chalk.red.bold('\t \t 2: DO NOT EDIT THE APP_ENV CONSTANT'));
                     console.log('\n');
 
-                    if(!process.env.Path.match('mongo') && OS.platform === ('darwin' || 'linux')) {
+                    // On macs it's in all caps ...sigh.
+                    if((process.env.Path && !process.env.Path.match('mongo')) || (prcess.env.PATH && !process.env.Path.match('mongo'))) {
                       console.log(CLI.prompt, chalk.red.bold('NOTICE: MONGO NOT IN PATH'));
                       console.log(CLI.prompt, chalk.red.bold('\t If you need help installing mongo: http://docs.mongodb.org/manual/installation/'));
                     }
