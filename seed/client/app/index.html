@@ -5,7 +5,21 @@
     <link  href="main.css" rel="stylesheet">
   </head>
   <body ng-app="APP_NAME">
+    <header>
+      <h1>GULP-MEAN-SEED</h1>
+      <nav>
+        <ul>
+          <li><a ng-href="#/">Home</a></li>
+          <li><a ng-href="#/install">Installation</a></li>
+          <li><a ng-href="#/client">Client</a></li>
+          <li><a ng-href="#/platform">Platform</a></li>
+          <li><a ng-href="#/cli">CLI</a></li>
+        </ul>
+      </nav>
+    </header>
+
     <div ng-view></div>
+
     <!-- Angular -->
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>

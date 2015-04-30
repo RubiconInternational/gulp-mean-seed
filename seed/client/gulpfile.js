@@ -191,7 +191,8 @@ gulp.task('scripts.inject', function() {
 
 var Reload = function(file, cb) {
   if(file.match('.js')) { Reload.scripts(cb); }
-  if(file.match('.scss')) { Reload.styles(cb); }
+  else if(file.match('.scss')) { Reload.styles(cb); }
+  else { cb();}
 };
 
 Reload.scripts = function(cb) {

@@ -1,40 +1,21 @@
 <div class="module main">
-  <header>
-    <h1>NG SEED PROJECT</h1>
-  </header>
-  <div>
-    <header>
-      <h4>List of data from model driven purely by reference!</h4>
-    </header>
-    <div>
+  <div class="tabs">
+    <ul>
+      <li ng-repeat="tab in tabs" ng-click="active.tab = tab" ng-class="{active: active.tab === tab}">{{tab}}</li>
+    </ul>
+  </div>
+  <div class="content">
+    <div class="tab" ng-show="active.tab === 'about'">
+      <p>Thank you for using GULP-MEAN-SEED!</p>
+      <p>
+        Gulp-mean-seed is a gup driven generator for MEAN stack apps that ships with a few handy things:
+      </p>
       <ul>
-        <li ng-repeat="user in Model.data.users">
-          <ul>
-            <li>Name: {{user.name}}</li>
-            <li>Age: {{user.age}}</li>
-          </ul>
-        </li>
+        <li>End-to-end interaction with a mock 'users' module.</li>
+        <li>Verbose CLI management</li>
+        <li>Cross platform(OS) support</li>
       </ul>
     </div>
+    <div class="tab" ng-show="active.tab === 'philosophy'">philosophy</div>
   </div>
-</div>
-
-<div>
-  Actions
-  <button ng-click="Model.__actions__.users.attach()">Attach</button>
-  <button ng-click="Model.__actions__.users.detach()">Detach</button>
-  <button ng-click="Model.__actions__.users.bind()">Bind</button>
-  <button ng-click="Model.__actions__.users.unbind()">Unbind</button>
-</div>
-
-<div>
-  Model Data:
-  <br/>
-  {{Model.data}}
-</div>
-
-<div>
-  Model resources:
-  <br/>
-  {{Model.resources}}
 </div>
