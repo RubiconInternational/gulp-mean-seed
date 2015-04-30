@@ -24,6 +24,7 @@ var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
 var rimraf = require('rimraf');
 var system = require('./system.json');
+var sass = require('gulp-sass');
 var server;
 
 //
@@ -89,6 +90,28 @@ gulp.task('environment.app', function() {
 // STYLE TASKS
 //------------------------------------------------------------------------------------------//
 // @description CSS precompilation, etc
+var Styles = {};
+    Styles.name = 'APP_NAME.css';
+    Styles.src = ['sass/main.scss'];
+    Styles.dest = '.tmp';
+
+/**
+ * Clean
+ */
+gulp.task('styles.clean', function(cb) {
+  rimraf(Styles.dest + '/' + Styles.name, function() {
+    cb();
+  });
+});
+
+/**
+ * Compile
+ */
+gulp.task('styles.compile', function() {
+  return gulp.src(Styles.src)
+    .pipe(sass())
+    .pipe(gulp.dest(Styles.dest));
+});
 
 //
 // SCRIPT TASKS
@@ -152,12 +175,21 @@ gulp.task('scripts.inject', function() {
 //------------------------------------------------------------------------------------------//
 // @description @TODO, make this more map driven.
 
-var Reload = function(file) {
-  if(file.match('.js')) { Reload.scripts(); }
+var Reload = function(file, cb) {
+  if(file.match('.js')) { Reload.scripts(cb); }
+  if(file.match('.scss')) { Reload.styles(cb); }
 };
 
-Reload.scripts = function() {
-  run('scripts.clean', 'scripts.concat', 'scripts.inject');
+Reload.scripts = function(cb) {
+  run('scripts.clean', 'scripts.concat', 'scripts.inject', function() {
+    cb();
+  });
+};
+
+Reload.styles = function(cb) {
+  run('styles.clean', 'styles.compile', function() {
+    cb();
+  });
 };
 
 //
@@ -166,14 +198,14 @@ Reload.scripts = function() {
 // @description
 
 
-gulp.task('watch', function() {
-  return gulp.watch(['app/app.js', 'app/index.html', 'app/modules/**/*', 'app/system/**/*'], function(event) {
+gulp.task('watch', function(cb) {
+  return gulp.watch(['app/app.js', 'app/index.html', 'app/modules/**/*', 'app/system/**/*', 'sass/**/*'], function(event) {
 
     // Run type-driven reload tasks.
-    Reload(event.path);
-
-    return gulp.src(event.path)
-      .pipe(connect.reload());
+    Reload(event.path, function() {
+      gulp.src(event.path)
+        .pipe(connect.reload());
+    });
   });
 });
 
@@ -193,7 +225,7 @@ gulp.task('serve', function() {
   Environment.setting = argv.env || 'development';
   Environment.apply(Environment.setting);
 
-  run(['environment.app'], 'scripts.config', 'scripts.concat', ['scripts.inject', 'connect', 'watch']);
+  run(['environment.app'], 'scripts.config', 'scripts.concat', 'styles.clean', 'styles.compile', ['scripts.inject', 'connect', 'watch']);
 });
 
 module.exports = function() {
@@ -201,7 +233,7 @@ module.exports = function() {
   return {
     up: function() {
       var bin = Binaries[Environment.platform.map[Environment.platform.label]];
-      console.log(gulp.tasks)
+
       run('environment.binary', function() {
         exec(bin.command +' '+ bin.exec).exec();
       });
