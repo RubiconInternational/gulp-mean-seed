@@ -114,6 +114,20 @@ gulp.task('styles.compile', function() {
 });
 
 //
+// FONT TASKS
+//------------------------------------------------------------------------------------------//
+// @description
+var Fonts = {};
+    Fonts.src = ['app/bower_components/bootstrap-sass-official/assets/fonts/**/*', 'fonts/**/*'];
+    Fonts.dest = '.tmp/fonts/';
+
+gulp.task('fonts.tmp', function() {
+  return gulp.src(Fonts.src)
+    .pipe(gulp.dest(Fonts.dest))
+});
+
+
+//
 // SCRIPT TASKS
 //------------------------------------------------------------------------------------------//
 // @description Linting, concatenation, etc.
@@ -225,7 +239,7 @@ gulp.task('serve', function() {
   Environment.setting = argv.env || 'development';
   Environment.apply(Environment.setting);
 
-  run(['environment.app'], 'scripts.config', 'scripts.concat', 'styles.clean', 'styles.compile', ['scripts.inject', 'connect', 'watch']);
+  run(['environment.app'], 'scripts.config', 'scripts.concat', 'fonts.tmp', 'styles.clean', 'styles.compile', ['scripts.inject', 'connect', 'watch']);
 });
 
 module.exports = function() {

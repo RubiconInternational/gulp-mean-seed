@@ -4,4 +4,16 @@
  * @description
  */
 
-@import url("bower_components/bootstrap-sass-official/assets/stylesheets/");
+//
+// BootStrap
+//------------------------------------------------------------------------------------------//
+// @description
+$icon-font-path: "fonts/bootstrap";
+@import url("bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap");
+
+//
+// FONTS
+//------------------------------------------------------------------------------------------//
+// @description
+@import "fonts";
+@import "../app/modules/main/sass/main";
