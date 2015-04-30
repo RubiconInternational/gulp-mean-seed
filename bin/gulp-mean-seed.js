@@ -23,6 +23,33 @@ var art = require('ascii-art');
 process.chdir(cwd);
 
 //
+// HELPERS
+//------------------------------------------------------------------------------------------//
+// @description
+var Helpers = {};
+
+// Validation namespace
+Helpers.validate = {};
+
+/**
+ *
+ * @param name
+ */
+Helpers.validate.name = function(name) {
+  var regex;
+
+  name = name || '';
+  regex = new RegExp(Helpers.validate.name.invalid);
+  name = name.replace(regex, Helpers.validate.name.replacement);
+  return name;
+};
+
+// Invalid chars regex
+Helpers.validate.name.invalid = /[.\+\-\(\)\/\\!@#$%^&*\[\]\{\}0-9]/gi;
+// Replacement
+Helpers.validate.name.replacement = '_';
+
+//
 // CLI
 //------------------------------------------------------------------------------------------//
 // @description
@@ -48,7 +75,8 @@ var Seed = {
 };
 
 // Name
-Seed.name = argv._[0] || Seed.name;
+
+Seed.name = Helpers.validate.name(argv._[0]) || Seed.name;
 Seed.paths.separator = (Seed.paths.separators[OS.platform()] || Seed.paths.separators.default);
 Seed.paths.origin = Seed.paths.origin + Seed.paths.separator + '..' + Seed.paths.separator;
 Seed.paths.src = Seed.paths.origin + 'seed'+ Seed.paths.separator +'**' + Seed.paths.separator + '*';

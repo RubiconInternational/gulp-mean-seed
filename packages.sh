@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+SKIP=$1
+
+echo $SKIP
+
+if [ $SKIP = --skip-dependencies ]
+then
+    exit 0
+fi
 
 #stop gap until i figure out why ./bin cant find any modules.
 npm install -g chalk
