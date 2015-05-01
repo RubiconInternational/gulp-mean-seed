@@ -21,6 +21,7 @@ var rename = require('gulp-rename');
 var argv = require('minimist')(process.argv.slice(2));
 var archives = require('archives')({DB: {name: 'APP_NAME'}});
 var chalk = require('chalk');
+var rimraf = require('rimraf');
 
 //
 // ENVIRONMENT
@@ -37,7 +38,13 @@ var CLI = {};
 var Binaries = {
   darwin: {tpl: __dirname+'/bin/nix/_darwin.sh', exec: __dirname+'/bin/nix/darwin.sh '+__dirname+'/app.js', command: 'sh', base: __dirname+'/bin/nix/'},
   linux: {tpl: __dirname+'/bin/nix/_linux.sh', exec: __dirname+'/bin/nix/linux.sh '+__dirname+'/app.js', command: 'sh', base: __dirname+'/bin/nix/'},
-  win: {tpl: __dirname+'\\bin\\win\\_app.bat', exec: __dirname+'\\bin\\win\\app.bat '+__dirname+'/app.js', command: '', base: __dirname+'/bin/win/'}
+  win: {tpl: __dirname+'\\bin\\win\\_app.bat', exec: __dirname+'\\bin\\win\\app.bat '+__dirname+'/app.js', command: '', base: __dirname+'/bin/win/'},
+  dump: {
+    darwin: {exec: __dirname+'/bin/darwin/dump.sh', command: 'sh'},
+    linux: {},
+    win: {exec: __dirname+'\\bin\\win\\dump.bat', command: ''}
+  }
+
 };
 
 //
@@ -79,6 +86,16 @@ gulp.task('environment.binary', function() {
 // MONGO SEED TASKS !! CAUTION !!
 //------------------------------------------------------------------------------------------//
 // @description
+var Mongo = {};
+    Mongo.DB = 'APP_NAME';
+    Mongo.dump = {
+      win: __dirname+'\\db\\',
+      darwin: __dirname+'/db/'
+    };
+
+/**
+ * Seed
+ */
 gulp.task('mongo.seed', function(cb) {
   console.log(CLI.prompt, CLI.message('Seeding APP_NAME DB...'));
   var users = require('./mocks/users.json');
@@ -96,6 +113,17 @@ gulp.task('mongo.seed', function(cb) {
   });
 });
 
+/**
+ * DUMP
+ */
+gulp.task('mongo.dump', function(cb) {
+  var dest = Mongo.dump[Environment.platform.map[Environment.platform.label]] + Date.now();
+  var bin = Binaries.dump[Environment.platform.map[Environment.platform.label]];
+
+  exec(bin.command + ' ' + bin.exec +' '+dest, function(err) {
+    cb();
+  }).exec();
+});
 //
 // GULP BUILD
 //------------------------------------------------------------------------------------------//
@@ -104,9 +132,12 @@ var Build = {};
     Build.src = ['./**/*', './.env', '!./node_modules', '!./node_modules/**/*', '!./mocks', '!./mocks/**/*'];
     Build.dest = './dist';
 
-gulp.task('build', function() {
-  return gulp.src(Build.src)
-    .pipe(gulp.dest(Build.dest));
+gulp.task('build', function(cb) {
+  rimraf(Build.dest, function() {
+    gulp.src(Build.src)
+      .pipe(gulp.dest(Build.dest));
+    cb();
+  });
 });
 
 //

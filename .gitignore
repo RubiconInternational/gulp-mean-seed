@@ -5,4 +5,5 @@ seed/client/.tmp/
 seed/build/
 seed/client/dist/
 seed/platform/dist/
+seed/platform/db
 .idea
