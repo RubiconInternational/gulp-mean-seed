@@ -1,1 +1,1 @@
-start cmd --login /k "cd client && gulp serve --env development"
+start cmd --login /k "cd client && gulp serve --env production"

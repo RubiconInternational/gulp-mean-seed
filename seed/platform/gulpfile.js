@@ -97,18 +97,35 @@ gulp.task('mongo.seed', function(cb) {
 });
 
 //
+// GULP BUILD
+//------------------------------------------------------------------------------------------//
+// @description
+var Build = {};
+    Build.src = ['./**/*', './.env', '!./node_modules', '!./node_modules/**/*', '!./mocks', '!./mocks/**/*'];
+    Build.dest = './dist';
+
+gulp.task('build', function() {
+  return gulp.src(Build.src)
+    .pipe(gulp.dest(Build.dest));
+});
+
+//
 // APP_NAME Platform entry.
 //------------------------------------------------------------------------------------------//
 // @description
 module.exports = function() {
   // Ingest environment config.
-
   return {
     up: function() {
       var bin = Binaries[Environment.platform.map[Environment.platform.label]];
 
       run('environment.binary', function() {
         exec(bin.command +' '+ bin.exec).exec();
+      });
+    },
+    build: function(cb) {
+      exec('cd '+__dirname+' && gulp build --env '+ Environment.setting).exec(function() {
+        if(cb) { cb('platform'); }
       });
     }
   }

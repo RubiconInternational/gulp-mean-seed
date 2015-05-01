@@ -2,4 +2,7 @@
 node_modules
 bower_components
 seed/client/.tmp/
+seed/build/
+seed/client/dist/
+seed/platform/dist/
 .idea

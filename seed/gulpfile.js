@@ -43,9 +43,11 @@ var Systems = function() {
      * Runs tasks
      * @param task
      */
-    all: function(task) {
+    all: function(task, cb) {
       for(var module in modules) {
-        modules[module][task]();
+        var fn = modules[module][task];
+
+        if(fn) { fn(cb); }
       }
     },
     /**
@@ -152,6 +154,16 @@ gulp.task('systems', function(cb) {
 gulp.task('systems.up', function(cb) {
   Systems.all('up');
   return cb(); // preserve stream
+});
+
+/**
+ * Serve
+ */
+gulp.task('systems.build', function(cb) {
+  Systems.all('build', function(system) {
+    gulp.src(__dirname+'/'+system+'/dist/**/*')
+      .pipe(gulp.dest('./build/'+system));
+  });
 });
 
 //

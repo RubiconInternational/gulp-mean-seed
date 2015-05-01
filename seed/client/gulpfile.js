@@ -25,6 +25,7 @@ var argv = require('minimist')(process.argv.slice(2));
 var rimraf = require('rimraf');
 var system = require('./system.json');
 var sass = require('gulp-sass');
+var useref = require('gulp-useref');
 var server;
 
 //
@@ -63,9 +64,8 @@ gulp.task('environment.binary', function() {
   var binary = Binaries[Environment.platform.map[Environment.platform.label]];
   var base = binary.base;
 
-  console.log(binary)
   return gulp.src(binary.tpl)
-    .pipe(replace(/development/g, Environment.setting))
+    .pipe(replace(/APP_ENV/g, Environment.setting))
     .pipe(rename(function(path) {
       path.basename = path.basename.split('_')[1];
     }))
@@ -78,7 +78,7 @@ gulp.task('environment.binary', function() {
 gulp.task('environment.app', function() {
   var base = __dirname;
 
-  gulp.src(base+'/.env', {base:base})
+  return gulp.src(base+'/.env', {base:base})
     .pipe(replace(/([a-zA-Z0-9])\w+/g, 'var env = "'+Environment.setting+'";'))
     .pipe(rename(function(path) {
       path.basename = path.basename.split('.')[1];
@@ -111,6 +111,10 @@ gulp.task('styles.compile', function() {
   return gulp.src(Styles.src)
     .pipe(sass())
     .pipe(gulp.dest(Styles.dest));
+});
+
+gulp.task('styles.vendor', function() {
+
 });
 
 //
@@ -156,7 +160,7 @@ gulp.task('scripts.config', function() {
       path.basename = 'config';
       path.extname = '.js';
     }))
-    .pipe(gulp.dest('app'));
+    .pipe(gulp.dest(__dirname+'/app'));
 });
 
 /**
@@ -176,12 +180,23 @@ gulp.task('scripts.inject', function() {
   var target = gulp.src('app/index.html');
   var sources = gulp.src(Scripts.dest + '/' + Scripts.name);
 
+  console.log('injecting');
   return target.pipe(inject(sources, {relative: true,
     transform: function() {
       return '<script src="'+Scripts.name+'"></script>';
     }
   }))
   .pipe(gulp.dest('app'));
+});
+
+gulp.task('scripts.vendor', function() {
+  var assets = useref.assets();
+
+  return gulp.src('app/index.html')
+    .pipe(assets)
+    .pipe(assets.restore())
+    .pipe(useref())
+    .pipe(gulp.dest('dist'))
 });
 
 //
@@ -243,6 +258,44 @@ gulp.task('serve', function() {
   run(['environment.app'], 'scripts.config', 'scripts.concat', 'fonts.tmp', 'styles.clean', 'styles.compile', ['scripts.inject', 'connect', 'watch']);
 });
 
+//
+// BUILD
+//------------------------------------------------------------------------------------------//
+// @description
+var Build = {};
+    Build.dest = 'dist/';
+    Build.assets = [
+      {dest:'', src:'.tmp/APP_NAME.js'},
+      {dest: '',  src:'.tmp/main.css'},
+      {dest: 'fonts', src:'.tmp/fonts/**/*'},
+      {dest: 'images', src: 'app/images/**/*'},
+      {dest: 'system', src:'app/system/**/*.html'},
+      {dest: 'modules', src:'app/modules/**/*.html'}
+    ];
+
+/**
+ * Build
+ */
+gulp.task('build', function(cb) {
+  Environment.setting = argv.env || 'development';
+  Environment.apply(Environment.setting);
+
+  rimraf(Build.dest, function() {
+    run(['environment.app'], 'scripts.config', 'scripts.concat', 'fonts.tmp', 'styles.clean', 'styles.compile', 'scripts.inject', 'scripts.vendor', function() {
+      Build.assets.forEach(function(asset) {
+        gulp.src(asset.src)
+          .pipe(gulp.dest(Build.dest + asset.dest));
+      });
+
+      cb();
+    });
+  });
+});
+
+//
+// API
+//------------------------------------------------------------------------------------------//
+// @description
 module.exports = function() {
 
   return {
@@ -251,6 +304,11 @@ module.exports = function() {
 
       run('environment.binary', function() {
         exec(bin.command +' '+ bin.exec).exec();
+      });
+    },
+    build: function(cb) {
+      exec('cd '+__dirname+' && gulp build --env '+ Environment.setting).exec(function() {
+        if(cb) { cb('client'); }
       });
     }
   }
