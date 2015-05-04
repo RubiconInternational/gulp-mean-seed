@@ -1,3 +1,84 @@
 <div class="module client">
+  <div class="tabs">
+    <ul>
+      <li ng-repeat="tab in tabs" ng-click="active.tab = tab" ng-class="{active: active.tab === tab}">{{tab}}</li>
+    </ul>
+  </div>
+  <div class="content">
+    <div class="tab" ng-show="active.tab === 'data'">
 
+    </div>
+    <div class="tab" ng-show="active.tab === 'philosophy'">
+      <header>
+        <h4>Valence</h4>
+      </header>
+      <div>
+        <p>Gulp-Mean-Seed is packaged with an Angular.js data layer known as Valence.</p>
+
+        <p>Here are some points about Valence: </p>
+        <ol>
+          <li>Provides configurable caching</li>
+          <li>Promotes data reuse.</li>
+          <li>Promotes clean abstractions betweenn data and business requirements.</li>
+          <li>available through dependency injection.</li>
+          <li>Cleanly aggregate data from multiple sources.</li>
+          <li>Promotes thin controllers.</li>
+        </ol>
+
+        <p>The below diagram illustrates the structure and flow of a Valence data layer.</p>
+        <a href="http://imgur.com/doRl3Rd"><img src="http://i.imgur.com/doRl3Rd.png" title="source: imgur.com" width="960px"/></a>
+
+        <ol>
+          <li>Typically there is one model per view.</li>
+          <li>Models can have many resources, and even share them.</li>
+          <li>Resources save their data to a centralized cache.</li>
+          <li>Resources will first evaluate data in the cache, if the cache is empty or is expired, it will consult the remote provider.</li>
+          <li>Everything is purely reference driven, preserving memory to ensure a natural congruence with Angular's digest cycle.</li>
+          <li>Robust API at every layer.</li>
+        </ol>
+      </div>
+
+    </div>
+
+    <div class="tab" ng-show="active.tab === 'data'">
+      <header>
+        <h4>Seed Data</h4>
+      </header>
+      <div>
+        <p>This page aims to show you how awesome data can be when working with Valence.</p>
+        <p ng-if="!model.data.users.length">If you want to see the mock seed data. Please run 'gulp mongo.seed' from './platform'. It will seed your DB with a few fake users.</p>
+      </div>
+      <p>Users:</p>
+      <ul>
+        <li ng-repeat="user in model.data.users">
+          <ul>
+            <li>{{user.name}}</li>
+            <li>{{user.age}}</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p>Sample resource API - Examine - 'Valence' in the console.</p>
+
+      <ul>
+        <li>
+          Can attach a resource to a model.
+          <button ng-click="model.__actions__.users.attach()">Attach</button></li>
+        <li>
+          Removes a resource from the model *and* unbinds the data.
+          <button ng-click="model.__actions__.users.detach()">Detach</button></li>
+        <li>
+          Binds resource data to the model. If resource is unattached, it will attach it,
+          <button ng-click="model.__actions__.users.bind()">Bind</button></li>
+        <li>
+          Unbinds resource data from the model. Does not detach resource.
+          <button ng-click="model.__actions__.users.unbind()">Unbind</button></li>
+      </ul>
+
+      <p>Caching</p>
+
+      <p>In valence, all resource data is cached by default. You can circumvent the cache be setting the expiry to 0.</p>
+      <p>Open the network panel and click on the button below</p>
+    </div>
+  </div>
 </div>

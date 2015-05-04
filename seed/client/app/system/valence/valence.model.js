@@ -61,15 +61,17 @@ angular.module('Valence')
         },
         detach: function() {
           delete self.resources[resource.name];
-
+          this.unbind();
           return this;
         },
         bind: function() {
+          if(!self.resources[resource.name]) {
+            self.resources[resource.name] = this;
+          }
           self.data[resource.name] = resource.data;
           return this;
         },
         unbind: function() {
-          console.log(self.data)
           delete self.data[resource.name];
           return this;
         }
