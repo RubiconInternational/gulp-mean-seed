@@ -40,8 +40,8 @@ var Binaries = {
   linux: {tpl: __dirname+'/bin/nix/_linux.sh', exec: __dirname+'/bin/nix/linux.sh '+__dirname+'/app.js', command: 'sh', base: __dirname+'/bin/nix/'},
   win: {tpl: __dirname+'\\bin\\win\\_app.bat', exec: __dirname+'\\bin\\win\\app.bat '+__dirname+'/app.js', command: '', base: __dirname+'/bin/win/'},
   dump: {
-    darwin: {exec: __dirname+'/bin/darwin/dump.sh', command: 'sh'},
-    linux: {},
+    darwin: {exec: __dirname+'/bin/nix/dump.sh', command: 'sh'},
+    linux: {exec: __dirname+'/bin/nix/dump.sh', command: 'sh'},
     win: {exec: __dirname+'\\bin\\win\\dump.bat', command: ''}
   }
 
@@ -120,6 +120,7 @@ gulp.task('mongo.dump', function(cb) {
   var dest = Mongo.dump[Environment.platform.map[Environment.platform.label]] + Date.now();
   var bin = Binaries.dump[Environment.platform.map[Environment.platform.label]];
 
+console.log(bin, dest)
   exec(bin.command + ' ' + bin.exec +' '+dest, function(err) {
     cb();
   }).exec();
