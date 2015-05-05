@@ -1,6 +1,6 @@
 {
   "name": "gulp-mean-seed",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Gulp driven Mean seed with supporting CLI.",
   "main": "index.js",
   "scripts": {
