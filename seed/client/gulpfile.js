@@ -180,7 +180,6 @@ gulp.task('scripts.inject', function() {
   var target = gulp.src('app/index.html');
   var sources = gulp.src(Scripts.dest + '/' + Scripts.name);
 
-  console.log('injecting');
   return target.pipe(inject(sources, {relative: true,
     transform: function() {
       return '<script src="'+Scripts.name+'"></script>';
@@ -302,8 +301,9 @@ module.exports = function() {
     up: function() {
       var bin = Binaries[Environment.platform.map[Environment.platform.label]];
 
+      console.log(__dirname);
       run('environment.binary', function() {
-        exec(bin.command +' '+ bin.exec).exec();
+        exec(bin.command +' '+ bin.exec + ' '+ __dirname).exec();
       });
     },
     build: function(cb) {

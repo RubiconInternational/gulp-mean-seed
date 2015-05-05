@@ -1,2 +1,15 @@
 #!/usr/bin/env bash
-osascript -e 'tell application "Terminal" to activate' -e 'tell application "System Events" to tell process "Terminal" to keystroke "t" using command down' -e 'tell application "Terminal" to do script "cd client && gulp serve --env development" in selected tab of the front window'
+
+echo '
+
+runSimple("cd '$1' && gulp serve --env development")
+
+on runSimple(command)
+  tell application "Terminal"
+    activate
+    set newTab to do script(command)
+  end tell
+  return newTab
+end runSimple
+
+' | osascript - "$@" > /dev/null
