@@ -1,6 +1,6 @@
 {
   "name": "gulp-mean-seed",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Gulp driven Mean seed with supporting CLI.",
   "main": "index.js",
   "scripts": {
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ktstowell/gulp-mean-seed.git"
+    "url": "https://github.com/RubiconInternational/gulp-mean-seed.git"
   },
-  "author": "",
+  "author": "Rubicon International Development Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ktstowell/gulp-mean-seed/issues"
+    "url": "https://github.com/RubiconInternational/gulp-mean-seed/issues"
   },
-  "homepage": "https://github.com/ktstowell/gulp-mean-seed",
+  "homepage": "https://github.com/RubiconInternational/gulp-mean-seed",
   "devDependencies": {
     "ascii-art": "0.0.2-alpha",
     "chalk": "^1.0.0",
