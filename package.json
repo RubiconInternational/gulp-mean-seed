@@ -23,7 +23,7 @@
     "gulp": "^3.8.11",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.3",
-    "gulp-run": "^1.6.7",
+    "gulp-run": "1.6.7",
     "gulp-util": "^3.0.4",
     "gutil": "^1.6.4",
     "interpret": "^0.5.2",
