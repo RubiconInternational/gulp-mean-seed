@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/RubiconInternational/gulp-mean-seed",
   "devDependencies": {
-    "ascii-art": "0.0.2-alpha",
+    "ascii-art": "2.5.0",
     "chalk": "^1.0.0",
     "gulp": "^3.8.11",
     "gulp-rename": "^1.2.2",
